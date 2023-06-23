@@ -1,0 +1,42 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+Инвентаризация
+{% endblock %}
+
+{% block content %}
+    {% if textbook %}
+<table class="table">
+  <thead>
+    <tr>
+        <th scope="col">ISBN</th>
+        <th scope="col">Название</th>
+        <th scope="col">Издание</th>
+        <th scope="col">Класс</th>
+        <th scope="col">Автор</th>
+        <th scope="col">Количество</th>
+        <th scope="col">Действия</th>
+    </tr>
+  </thead>
+  <tbody>
+        {% for i in textbook %}
+        <tr>
+            <th scope="row">{{ i.isbn }}</th>
+            <td>{{ i.title }}</td>
+            <td>{{ i.iteration }}</td>
+            <td>{{ i.clas }}</td>
+            <td>{{ i.autor }}</td>
+            <td>{{ i.otb }}</td>
+            <td>
+                <a class="me-3 py-2 text-dark text-decoration-none" href="{% url 'textbook' %}{{ i.isbn }}">
+                    <button class="btn btn-warning">Инвентаризация</button>
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+  </tbody>
+</table>
+    {% else %}
+        <span>Нет учебников</span>
+    {% endif %}
+{% endblock %}

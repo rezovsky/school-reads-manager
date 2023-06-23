@@ -1,0 +1,28 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+Добавление учебника
+{% endblock %}
+
+{% block content %}
+        <div class="features">
+            <h1>Добавление учебника</h1>
+            <form method="post" id="add_form">
+                {% csrf_token %}
+                {{ form }}
+                <script>
+                    $('#id_date').attr('value','{{ now }}');
+                    $('#id_date').attr('disabled', 'true');
+                    $('#add_form').on('submit', function(event){
+                        event.preventDefault();
+                        $('#id_date').prop('disabled', false);
+                         $('#add_form').off()
+                        $('#add_form').submit();
+                    });
+                </script>
+                <br>
+                <span>{{ error }}</span>
+                <button class="btn btn-success" type="submit">Добавить учебник</button><br><br>
+            </form>
+        </div>
+{% endblock %}
