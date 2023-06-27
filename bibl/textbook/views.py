@@ -85,6 +85,7 @@ def invent(request):
         tbtemp.append({
             'isbn': tb[i].isbn,
             'title': tb[i].title,
+            'publisher': tb[i].publisher,
             'iteration': tb[i].iteration,
             'clas': tb[i].clas,
             'autor': tb[i].autor,
