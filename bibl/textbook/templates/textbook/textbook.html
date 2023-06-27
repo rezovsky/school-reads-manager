@@ -18,14 +18,17 @@
       </thead>
              <tbody>
         {% for i in textbook %}
-           <tr>
-            <th scope="row">{{ i.isbn }}</th>
+       <tr>
+            <td scope="row">{{ i.isbn }}</td>
             <td>{{ i.title }}</td>
             <td>{{ i.clas }}</td>
             <td>{{ i.otb }}</td>
             <td>
+                <a class="me-3 py-2 text-dark text-decoration-none" href="{% url 'bookedit' i.isbn %}">
+                    <button class="btn btn-secondary">Редактировать</button>
+                </a>
                 <a class="me-3 py-2 text-dark text-decoration-none" href="{% url 'textbook' %}{{ i.isbn }}">
-                    <button class="btn btn-warning">Открыть</button>
+                    <button class="btn btn-success">Открыть</button>
                 </a>
             </td>
         </tr>

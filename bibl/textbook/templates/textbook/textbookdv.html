@@ -14,6 +14,7 @@
     <table class="table">
       <thead>
         <tr>
+            <th scope="col"><input type="checkbox"></th>
             <th scope="col">Инвент номер</th>
             <th scope="col">Дата добавления</th>
             <th scope="col">Наклейка</th>
@@ -23,6 +24,7 @@
       <tbody>
         {% for i in textbookinvent %}
         <tr>
+            <td><input type="checkbox"></td>
             <th scope="row">{{ i.inv }}</th>
             <td>{{ i.date }}</td>
             <td>
@@ -31,8 +33,8 @@
                 </a>
             </td>
             <td>
-                <button class="btn btn-warning" onClick="arhivbookconfirm('{{ i.inv }}','{{ i.isbn }}', '{% url 'arhivbook' i.inv %}')">Списать</button>
-                <button class="btn btn-warning" onClick="delbookconfirm('{{ i.inv }}','{{ i.isbn }}', '{% url 'delbook' i.inv %}')">Удалить</button>
+                <button class="btn btn-info" onClick="arhivbookconfirm('{{ i.inv }}','{{ i.isbn }}', '{% url 'arhivbook' i.inv %}')">Списать</button>
+                <button class="btn btn-danger" onClick="delbookconfirm('{{ i.inv }}','{{ i.isbn }}', '{% url 'delbook' i.inv %}')">Удалить</button>
             </td>
         </tr>
         {% endfor %}

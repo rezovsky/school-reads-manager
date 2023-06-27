@@ -1,7 +1,7 @@
 import os
 from django.shortcuts import render, redirect
-from .models import TextBook, TextBookInvent
-from .forms import AddTextBookForm, AddTextBookInventForm
+from .models import TextBook, TextBookInvent, TextBookArhiv
+from .forms import AddTextBookForm, AddTextBookInventForm, EditTextBookForm
 import datetime
 import qrcode
 from django.views.generic import DetailView
@@ -47,6 +47,34 @@ def add(request):
         'now': nowdate()
     }
     return render(request, 'textbook/add.html', data)
+
+def bookedit(request, isbn):
+    error = ''
+    tb = TextBook.objects.get(isbn=isbn)
+    if request.method == 'POST':
+        form = EditTextBookForm(request.POST)
+        if form.is_valid():
+            tb.title = str(request.POST.get('title'))
+            tb.autor = str(request.POST.get('autor'))
+            tb.year = str(request.POST.get('year'))
+            tb.clas = str(request.POST.get('clas'))
+            tb.publisher = str(request.POST.get('publisher'))
+            tb.save()
+            return redirect('textbook')
+        else:
+            error = 'Форма неверная '
+
+    form = EditTextBookForm()
+
+    data = {
+        'form': form,
+        'error': error,
+        'local_nav': 'textbook/nav.html',
+        'isbn': isbn,
+        'tb': tb,
+        'now': nowdate()
+    }
+    return render(request, 'textbook/edit.html', data)
 
 
 def invent(request):
@@ -108,6 +136,13 @@ def TextBookDV(request, isbn):
 
                 img = qr.make_image(fill_color="black", back_color="white")
 
+                mediadir = os.path.join(os.getcwd(), 'bibl', 'media')
+                if not os.path.isdir(mediadir):
+                    os.mkdir(mediadir)
+                qrdir = os.path.join(os.getcwd(), 'bibl', 'media', 'qrcode')
+                if not os.path.isdir(qrdir):
+                    os.mkdir(qrdir)
+
                 path = os.path.join(os.getcwd(), 'bibl', 'media', 'qrcode', str(isbn))
                 if not os.path.isdir(path):
                     os.mkdir(path)
@@ -157,17 +192,25 @@ def delbook(request, invent):
     }
     tbi.delete()
 
-    return render(request, 'textbook/delbook.html', data)
+    return redirect('/textbook/' + str(isbn))
 
 def arhivbook(request, invent):
     tbi = TextBookInvent.objects.get(inv=invent)
+
     isbn = tbi.isbn
+    inv = tbi.inv
+    date = tbi.date
+
+    tba = TextBookArhiv(inv=inv, isbn=isbn, date=date)
+    tba.save()
+
+
     data = {
         'isbn': isbn
     }
     tbi.delete()
 
-    return render(request, 'textbook/delbook.html', data)
+    return redirect('/textbook/' + str(isbn))
 
 
 def nowdate():
