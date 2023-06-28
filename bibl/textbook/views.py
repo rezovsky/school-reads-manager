@@ -1,4 +1,6 @@
 import os
+import random
+
 from django.shortcuts import render, redirect
 from .models import TextBook, TextBookInvent, TextBookArhiv
 from .forms import AddTextBookForm, AddTextBookInventForm, EditTextBookForm
@@ -23,7 +25,8 @@ def index(request):
 
     data = {
         'textbook': tbtemp,
-        'local_nav': 'textbook/nav.html'
+        'local_nav': 'textbook/nav.html',
+        'rnd': rnd()
     }
 
     return render(request, 'textbook/textbook.html', data)
@@ -44,7 +47,8 @@ def add(request):
         'form': form,
         'error': error,
         'local_nav': 'textbook/nav.html',
-        'now': nowdate()
+        'now': nowdate(),
+        'rnd': rnd()
     }
     return render(request, 'textbook/add.html', data)
 
@@ -72,7 +76,8 @@ def bookedit(request, isbn):
         'local_nav': 'textbook/nav.html',
         'isbn': isbn,
         'tb': tb,
-        'now': nowdate()
+        'now': nowdate(),
+        'rnd': rnd()
     }
     return render(request, 'textbook/edit.html', data)
 
@@ -94,7 +99,8 @@ def invent(request):
 
     data = {
         'textbook': tbtemp,
-        'local_nav': 'textbook/nav.html'
+        'local_nav': 'textbook/nav.html',
+        'rnd': rnd()
     }
 
     return render(request, 'textbook/invent.html', data)
@@ -179,7 +185,8 @@ def TextBookDV(request, isbn):
         'isbn': isbn,
         'local_nav': 'textbook/nav.html',
         'errot': error,
-        'allinventbook': allinventbook
+        'allinventbook': allinventbook,
+        'rnd': rnd()
     }
 
     return render(request, 'textbook/textbookdv.html', data)
@@ -216,3 +223,6 @@ def arhivbook(request, invent):
 
 def nowdate():
     return datetime.datetime.today().strftime("%d.%m.%Y")
+
+def rnd():
+    return (random.random() * 10000) // 1

@@ -4,17 +4,29 @@
 Учебник {{ textbook.title }} {{ textbook.clas }} класс
 {% endblock %}
 
+{% block local_nav %}
+    {% include local_nav %}
+{% endblock %}
+
 {% block content %}
-<h2>{{ isbn }} Учебник {{ textbook.title }} - {{ textbook.clas }} класс</h2>
-    {% if textbookinvent %}
-    <h3>Всего учебников: {{ allinventbook }}</h3>
+<div class="pb-2 container">
     <a class="me-3 py-2 text-dark text-decoration-none" href="{% url 'multi_print' isbn %}" target="_blank">
         <button class="btn btn-warning">Печать всех</button>
     </a>
+    <a class="me-3 py-2 text-dark text-decoration-none action-buttons" href="{% url 'add' %}">
+        <button class="btn btn-info" id="archivAllButton">Списать</button>
+    </a>
+    <a class="me-3 py-2 text-dark text-decoration-none action-buttons" href="{% url 'invent' %}">
+        <button class="btn btn-danger">Удалить</button>
+        </a>
+</div>
+<h2>{{ isbn }} Учебник {{ textbook.title }} - {{ textbook.clas }} класс</h2>
+    {% if textbookinvent %}
+    <h3>Всего учебников: {{ allinventbook }}</h3>
     <table class="table">
       <thead>
         <tr>
-            <th scope="col"><input type="checkbox"></th>
+            <th scope="col"><input type="checkbox" id="checkall"  onchange="checkedAllInvent(this)"></th>
             <th scope="col">Инвент номер</th>
             <th scope="col">Дата добавления</th>
             <th scope="col">Наклейка</th>
@@ -24,7 +36,7 @@
       <tbody>
         {% for i in textbookinvent %}
         <tr>
-            <td><input type="checkbox"></td>
+            <td><input id="check{{ i.id }}" type="checkbox" class="checkerInvent"></td>
             <th scope="row">{{ i.inv }}</th>
             <td>{{ i.date }}</td>
             <td>

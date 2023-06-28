@@ -4,6 +4,10 @@
 Учебники
 {% endblock %}
 
+{% block local_nav %}
+    {% include local_nav with isbn=isbn %}
+{% endblock %}
+
 {% block content %}
     {% if textbook %}
     <table class="table">
