@@ -52,6 +52,7 @@ def add(request):
     }
     return render(request, 'textbook/add.html', data)
 
+
 def bookedit(request, isbn):
     error = ''
     tb = TextBook.objects.get(isbn=isbn)
@@ -116,8 +117,8 @@ def TextBookDV(request, isbn):
             data = form.cleaned_data
             try:
                 temp = TextBookInvent.objects.filter(isbn=isbn, inv__contains=inv).order_by('inv')
-                if(len(temp)):
-                    qol_first = int(temp[len(temp)-1].inv.split('.')[1])
+                if (len(temp)):
+                    qol_first = int(temp[len(temp) - 1].inv.split('.')[1])
                 else:
                     qol_first = 0
             except TextBookInvent.DoesNotExist:
@@ -193,36 +194,57 @@ def TextBookDV(request, isbn):
 
 
 def delbook(request, invent):
-    tbi = TextBookInvent.objects.get(inv=invent)
-    isbn = tbi.isbn
-    data = {
-        'isbn': isbn
-    }
-    tbi.delete()
+    if int(invent.split('.')[0]) > 0:
+        tbi = TextBookInvent.objects.get(inv=invent)
+        isbn = tbi.isbn
+        tbi.delete()
+    else:
+        ids = invent.replace ('-', '').split('.')
+        for i in ids:
+            tbi = TextBookInvent.objects.get(id=i)
+            isbn = tbi.isbn
+            tbi.delete()
 
     return redirect('/textbook/' + str(isbn))
+
+
+
 
 def arhivbook(request, invent):
-    tbi = TextBookInvent.objects.get(inv=invent)
+    if int(invent.split('.')[0]) > 0:
+        tbi = TextBookInvent.objects.get(inv=invent)
 
-    isbn = tbi.isbn
-    inv = tbi.inv
-    date = tbi.date
+        isbn = tbi.isbn
+        inv = tbi.inv
+        date = tbi.date
 
-    tba = TextBookArhiv(inv=inv, isbn=isbn, date=date)
-    tba.save()
+        tba = TextBookArhiv(inv=inv, isbn=isbn, date=date)
+        tba.save()
+        tbi.delete()
 
+    else:
+        ids = invent.replace('-', '').split('.')
+        for i in ids:
+            tbi = TextBookInvent.objects.get(id=i)
+            isbn = tbi.isbn
 
-    data = {
-        'isbn': isbn
-    }
-    tbi.delete()
+            isbn = tbi.isbn
+            inv = tbi.inv
+            date = tbi.date
+
+            tba = TextBookArhiv(inv=inv, isbn=isbn, date=date)
+            tba.save()
+            tbi.delete()
+
 
     return redirect('/textbook/' + str(isbn))
+
+
 
 
 def nowdate():
     return datetime.datetime.today().strftime("%d.%m.%Y")
+
 
 def rnd():
     return (random.random() * 10000) // 1

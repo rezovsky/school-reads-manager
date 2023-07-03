@@ -13,12 +13,8 @@
     <a class="me-3 py-2 text-dark text-decoration-none" href="{% url 'multi_print' isbn %}" target="_blank">
         <button class="btn btn-warning">Печать всех</button>
     </a>
-    <a class="me-3 py-2 text-dark text-decoration-none action-buttons" href="{% url 'add' %}">
-        <button class="btn btn-info" id="archivAllButton">Списать</button>
-    </a>
-    <a class="me-3 py-2 text-dark text-decoration-none action-buttons" href="{% url 'invent' %}">
-        <button class="btn btn-danger">Удалить</button>
-        </a>
+    <button class="me-3 btn btn-info action-buttons" onClick="actions('arhive', '{% url 'arhivbook' -1 %}')">Списать</button>
+    <button class="me-3 btn btn-danger action-buttons" onClick="actions('del', '{% url 'delbook' -1 %}')">Удалить</button>
 </div>
 <h2>{{ isbn }} Учебник {{ textbook.title }} - {{ textbook.clas }} класс</h2>
     {% if textbookinvent %}
@@ -36,7 +32,7 @@
       <tbody>
         {% for i in textbookinvent %}
         <tr>
-            <td><input id="check{{ i.id }}" type="checkbox" class="checkerInvent"></td>
+            <td><input id="check-{{ i.id }}" type="checkbox" class="checkerInvent" onchange="checkedInvent(this)"></td>
             <th scope="row">{{ i.inv }}</th>
             <td>{{ i.date }}</td>
             <td>
