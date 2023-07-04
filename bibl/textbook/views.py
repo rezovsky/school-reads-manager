@@ -1,7 +1,9 @@
 import os
+import random
+
 from django.shortcuts import render, redirect
-from .models import TextBook, TextBookInvent
-from .forms import AddTextBookForm, AddTextBookInventForm
+from .models import TextBook, TextBookInvent, TextBookArhiv
+from .forms import AddTextBookForm, AddTextBookInventForm, EditTextBookForm
 import datetime
 import qrcode
 from django.views.generic import DetailView
@@ -23,7 +25,8 @@ def index(request):
 
     data = {
         'textbook': tbtemp,
-        'local_nav': 'textbook/nav.html'
+        'local_nav': 'textbook/nav.html',
+        'rnd': rnd()
     }
 
     return render(request, 'textbook/textbook.html', data)
@@ -44,9 +47,40 @@ def add(request):
         'form': form,
         'error': error,
         'local_nav': 'textbook/nav.html',
-        'now': nowdate()
+        'now': nowdate(),
+        'rnd': rnd()
     }
     return render(request, 'textbook/add.html', data)
+
+
+def bookedit(request, isbn):
+    error = ''
+    tb = TextBook.objects.get(isbn=isbn)
+    if request.method == 'POST':
+        form = EditTextBookForm(request.POST)
+        if form.is_valid():
+            tb.title = str(request.POST.get('title'))
+            tb.autor = str(request.POST.get('autor'))
+            tb.year = str(request.POST.get('year'))
+            tb.clas = str(request.POST.get('clas'))
+            tb.publisher = str(request.POST.get('publisher'))
+            tb.save()
+            return redirect('textbook')
+        else:
+            error = 'Форма неверная '
+
+    form = EditTextBookForm()
+
+    data = {
+        'form': form,
+        'error': error,
+        'local_nav': 'textbook/nav.html',
+        'isbn': isbn,
+        'tb': tb,
+        'now': nowdate(),
+        'rnd': rnd()
+    }
+    return render(request, 'textbook/edit.html', data)
 
 
 def invent(request):
@@ -57,6 +91,7 @@ def invent(request):
         tbtemp.append({
             'isbn': tb[i].isbn,
             'title': tb[i].title,
+            'publisher': tb[i].publisher,
             'iteration': tb[i].iteration,
             'clas': tb[i].clas,
             'autor': tb[i].autor,
@@ -65,7 +100,8 @@ def invent(request):
 
     data = {
         'textbook': tbtemp,
-        'local_nav': 'textbook/nav.html'
+        'local_nav': 'textbook/nav.html',
+        'rnd': rnd()
     }
 
     return render(request, 'textbook/invent.html', data)
@@ -81,8 +117,8 @@ def TextBookDV(request, isbn):
             data = form.cleaned_data
             try:
                 temp = TextBookInvent.objects.filter(isbn=isbn, inv__contains=inv).order_by('inv')
-                if(len(temp)):
-                    qol_first = int(temp[len(temp)-1].inv.split('.')[1])
+                if (len(temp)):
+                    qol_first = int(temp[len(temp) - 1].inv.split('.')[1])
                 else:
                     qol_first = 0
             except TextBookInvent.DoesNotExist:
@@ -107,6 +143,13 @@ def TextBookDV(request, isbn):
                 qr.make(fit=True)
 
                 img = qr.make_image(fill_color="black", back_color="white")
+
+                mediadir = os.path.join(os.getcwd(), 'bibl', 'media')
+                if not os.path.isdir(mediadir):
+                    os.mkdir(mediadir)
+                qrdir = os.path.join(os.getcwd(), 'bibl', 'media', 'qrcode')
+                if not os.path.isdir(qrdir):
+                    os.mkdir(qrdir)
 
                 path = os.path.join(os.getcwd(), 'bibl', 'media', 'qrcode', str(isbn))
                 if not os.path.isdir(path):
@@ -143,32 +186,65 @@ def TextBookDV(request, isbn):
         'isbn': isbn,
         'local_nav': 'textbook/nav.html',
         'errot': error,
-        'allinventbook': allinventbook
+        'allinventbook': allinventbook,
+        'rnd': rnd()
     }
 
     return render(request, 'textbook/textbookdv.html', data)
 
 
 def delbook(request, invent):
-    tbi = TextBookInvent.objects.get(inv=invent)
-    isbn = tbi.isbn
-    data = {
-        'isbn': isbn
-    }
-    tbi.delete()
+    if int(invent.split('.')[0]) > 0:
+        tbi = TextBookInvent.objects.get(inv=invent)
+        isbn = tbi.isbn
+        tbi.delete()
+    else:
+        ids = invent.replace ('-', '').split('.')
+        for i in ids:
+            tbi = TextBookInvent.objects.get(id=i)
+            isbn = tbi.isbn
+            tbi.delete()
 
-    return render(request, 'textbook/delbook.html', data)
+    return redirect('/textbook/' + str(isbn))
+
+
+
 
 def arhivbook(request, invent):
-    tbi = TextBookInvent.objects.get(inv=invent)
-    isbn = tbi.isbn
-    data = {
-        'isbn': isbn
-    }
-    tbi.delete()
+    if int(invent.split('.')[0]) > 0:
+        tbi = TextBookInvent.objects.get(inv=invent)
 
-    return render(request, 'textbook/delbook.html', data)
+        isbn = tbi.isbn
+        inv = tbi.inv
+        date = tbi.date
+
+        tba = TextBookArhiv(inv=inv, isbn=isbn, date=date)
+        tba.save()
+        tbi.delete()
+
+    else:
+        ids = invent.replace('-', '').split('.')
+        for i in ids:
+            tbi = TextBookInvent.objects.get(id=i)
+            isbn = tbi.isbn
+
+            isbn = tbi.isbn
+            inv = tbi.inv
+            date = tbi.date
+
+            tba = TextBookArhiv(inv=inv, isbn=isbn, date=date)
+            tba.save()
+            tbi.delete()
+
+
+    return redirect('/textbook/' + str(isbn))
+
+
 
 
 def nowdate():
     return datetime.datetime.today().strftime("%d.%m.%Y")
+
+
+def rnd():
+    return (random.random() * 10000) // 1

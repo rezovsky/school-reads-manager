@@ -31,3 +31,15 @@ class TextBookInvent(models.Model):
     class Meta:
         verbose_name = 'Инвентарный номер'
         verbose_name_plural = "Инвентарные номера"
+
+class TextBookArhiv(models.Model):
+    inv = models.CharField('Инвентарный номер', max_length=10)
+    isbn = models.CharField('ISBN', max_length=20)
+    date = models.DateTimeField('Дата добавления')
+
+    def __str__(self):
+        return self.inv
+
+    class Meta:
+        verbose_name = 'Инвентарный номер'
+        verbose_name_plural = "Инвентарные номера"

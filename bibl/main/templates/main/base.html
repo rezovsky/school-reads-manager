@@ -9,8 +9,9 @@
     {% load static %}
 
     <link rel="stylesheet" href="{% static 'bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
     <script src="{% static 'jquery.min.js' %}"></script>
-    <script src="{% static 'main.js' %}"></script>
+    <script src="{% static 'main.js' %}?{{ rnd }}"></script>
 </head>
 <body>
     <header class="border-bottom">
@@ -24,7 +25,7 @@
         <a class="me-3 py-2 text-dark text-decoration-none" href="{% url 'textbook' %}">Ученики</a>
       </nav>
     </div>
-    {% include local_nav %}
+    {% block local_nav %}{% endblock%}
 
   </header>
     <div class="mt-2 container">
