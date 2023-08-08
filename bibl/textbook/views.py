@@ -2,11 +2,19 @@ import os
 import random
 
 from django.shortcuts import render, redirect
+from rest_framework.viewsets import ModelViewSet
+
 from .models import TextBook, TextBookInvent, TextBookArhiv
 from .forms import AddTextBookForm, AddTextBookInventForm, EditTextBookForm
 import datetime
 import qrcode
-from django.views.generic import DetailView
+
+from .serializer import TextBookSerializer
+
+
+class TextBookView(ModelViewSet):
+    queryset = TextBook.objects.all()
+    serializer_class = TextBookSerializer
 
 
 def index(request):

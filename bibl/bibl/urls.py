@@ -1,8 +1,13 @@
 from django.contrib import admin
 from django.urls import path, include
-from django.conf import settings
-from django.conf.urls.static import static
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from rest_framework.routers import SimpleRouter
+
+from textbook.views import TextBookView
+
+router = SimpleRouter()
+
+router.register('api/textbooks', TextBookView)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -13,6 +18,8 @@ urlpatterns = [
     path('print/', include('print.urls')),
 
 ]
+
+urlpatterns += router.urls
 
 urlpatterns += staticfiles_urlpatterns()
 
