@@ -9,7 +9,6 @@ urlpatterns = [
     path('', include('main.urls')),
     path('textbook/', include('textbook.urls')),
     path('book/', include('book.urls')),
-    path('jsonapp/', include('jsonapp.urls')),
     path('user/', include('user.urls')),
     path('print/', include('print.urls')),
 
