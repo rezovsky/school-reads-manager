@@ -40,7 +40,7 @@
         <a v-if="textbookDetail.length > 0" :href="'/print/multi/' + textbookDetail[0]?.isbn" target="_blank" class="btn btn-primary mb-3 ml-2">
             Печать всех
         </a>
-        <h2>Инвентаризация книги {{isbn}}</h2>
+        <h2>Инвентаризация книги {{isbn}} {{name}}</h2>
         <table v-if="textbookDetail.length > 0" class="table table-striped">
             <thead>
                 <tr>

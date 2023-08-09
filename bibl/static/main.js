@@ -4,6 +4,7 @@ new Vue({
         textbooks: [], // Массив для списка учебников
         textbookDetail: [], // Массив для деталей учебника
         isbn: '', // ISBN текущего учебника
+        name: '',
     },
     mounted() {
         this.fetchTextBooks(); // Вызов метода для загрузки списка учебников при монтировании компонента
@@ -22,6 +23,7 @@ new Vue({
         // Метод для загрузки деталей учебника по ISBN
         loadTextbookDetails(isbn) {
             this.isbn = isbn; // Устанавливаем текущий ISBN
+            this.name = 'name'
             // Добавляем новый URL в историю браузера
             window.history.pushState({}, "", "/textbook/" + isbn);
             this.textbookDetail = []; // Очищаем массив с деталями учебника
