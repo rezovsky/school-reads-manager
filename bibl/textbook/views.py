@@ -207,15 +207,13 @@ def delbook(request, invent):
         isbn = tbi.isbn
         tbi.delete()
     else:
-        ids = invent.replace ('-', '').split('.')
+        ids = invent.replace('-', '').split('.')
         for i in ids:
             tbi = TextBookInvent.objects.get(id=i)
             isbn = tbi.isbn
             tbi.delete()
 
     return redirect('/textbook/' + str(isbn))
-
-
 
 
 def arhivbook(request, invent):
@@ -244,10 +242,7 @@ def arhivbook(request, invent):
             tba.save()
             tbi.delete()
 
-
     return redirect('/textbook/' + str(isbn))
-
-
 
 
 def nowdate():
