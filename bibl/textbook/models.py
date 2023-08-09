@@ -1,7 +1,7 @@
 from django.db import models
 
 class TextBook(models.Model):
-    isbn = models.CharField('ISBN', max_length=20)
+    isbn = models.CharField('ISBN', max_length=20, unique=True)
     title = models.CharField('Название', max_length=50)
     autor = models.CharField('Автор', max_length=30)
     year = models.CharField('Год издания', max_length=4)
@@ -22,7 +22,7 @@ class TextBook(models.Model):
 
 class TextBookInvent(models.Model):
     inv = models.CharField('Инвентарный номер', max_length=10)
-    isbn = models.CharField('ISBN', max_length=20)
+    isbn = models.ForeignKey(TextBook, on_delete=models.CASCADE, to_field='isbn')
     date = models.DateTimeField('Дата добавления')
 
     def __str__(self):
