@@ -21,10 +21,15 @@
 </body>
 </html>
 <script>
-$(function($){
-	$("document").ready(function(){
-        setTimeout(function () { window.print(); }, 100);
-        window.onfocus = function () { setTimeout(function () { window.close(); }, 100); }
-	});
+document.addEventListener("DOMContentLoaded", function() {
+    setTimeout(function() {
+        window.print();
+    }, 100);
+
+    window.addEventListener("afterprint", function() {
+        setTimeout(function() {
+            window.close();
+        }, 100);
+    });
 });
 </script>

@@ -4,42 +4,62 @@
 Учебники
 {% endblock %}
 
-{% block local_nav %}
-    {% include local_nav with isbn=isbn %}
-{% endblock %}
-
 {% block content %}
-    {% if textbook %}
-    <table class="table">
-      <thead>
-        <tr>
-            <th scope="col">ISBN</th>
-            <th scope="col">Название</th>
-            <th scope="col">Класс</th>
-            <th scope="col">Количество</th>
-            <th scope="col">Действие</th>
-        </tr>
-      </thead>
-             <tbody>
-        {% for i in textbook %}
-       <tr>
-            <td scope="row">{{ i.isbn }}</td>
-            <td>{{ i.title }}</td>
-            <td>{{ i.clas }}</td>
-            <td>{{ i.otb }}</td>
-            <td>
-                <a class="me-3 py-2 text-dark text-decoration-none" href="{% url 'bookedit' i.isbn %}">
-                    <button class="btn btn-secondary">Редактировать</button>
-                </a>
-                <a class="me-3 py-2 text-dark text-decoration-none" href="{% url 'textbook' %}{{ i.isbn }}">
-                    <button class="btn btn-success">Открыть</button>
-                </a>
-            </td>
-        </tr>
-        {% endfor %}
-         </tbody>
-    </table>
-    {% else %}
-        <span>Нет учебников</span>
-    {% endif %}
+{% verbatim %}
+<div id="app">
+    <div v-if="!isbn">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ISBN</th>
+                    <th>Название</th>
+                    <th>Автор</th>
+                    <th>Год издания</th>
+                    <th>Класс</th>
+                    <th>Издатель</th>
+                    <th>Количество</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="textbook in textbooks" :key="textbook.isbn" @click="loadTextbookDetails(textbook.isbn)"  class="clickable-row">
+                    <td>{{ textbook.isbn }}</td>
+                    <td>{{ textbook.title }}</td>
+                    <td>{{ textbook.autor }}</td>
+                    <td>{{ textbook.year }}</td>
+                    <td>{{ textbook.clas }}</td>
+                    <td>{{ textbook.publisher }}</td>
+                    <td>{{ textbook.invent_count }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div v-if="isbn">
+        <a @click="goBack" class="btn btn-secondary mb-3">
+            Назад к списку
+        </a>
+        <a v-if="textbookDetail.length > 0" :href="'/print/multi/' + textbookDetail[0]?.isbn" target="_blank" class="btn btn-primary mb-3 ml-2">
+            Печать всех
+        </a>
+        <h2>Инвентаризация книги {{isbn}}</h2>
+        <table v-if="textbookDetail.length > 0" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Инвентарный номер</th>
+                    <th>Печать</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="inventNumber in textbookDetail" :key="inventNumber.id">
+                    <td>{{ inventNumber.inv }}</td>
+                    <td>
+                        <a :href="'/print/single/' + inventNumber.isbn + '/' + inventNumber.inv" target="_blank" class="btn btn-primary btn-sm">
+                            Печать
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endverbatim %}
 {% endblock %}
