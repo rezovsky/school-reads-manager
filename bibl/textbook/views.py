@@ -14,7 +14,7 @@ from .serializer import TextBookSerializer, TextBookInventSerializer
 
 
 class TextBookView(ModelViewSet):
-    queryset = TextBook.objects.all().order_by('-date')
+    queryset = TextBook.objects.all().order_by('clas', 'title')
     serializer_class = TextBookSerializer
 
 

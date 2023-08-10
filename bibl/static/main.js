@@ -6,6 +6,7 @@ new Vue({
         isbn: '', // ISBN текущего учебника
         bookdata: [],
         inventCount: 1,
+        inventNumber: 0,
         addingInventory: false
     },
     methods: {
@@ -21,6 +22,7 @@ new Vue({
             this.isbn = isbn; // Устанавливаем текущий ISBN
             this.bookdata = this.textbooks.find(textbook => textbook.isbn === isbn).data
 
+
             // Добавляем новый URL в историю браузера
             window.history.pushState({}, "", "/textbook/" + isbn);
             this.textbookDetail = []; // Очищаем массив с деталями учебника
@@ -32,6 +34,11 @@ new Vue({
             axios.get('/api/textbook/' + isbn)
                 .then(response => {
                     this.textbookDetail = response.data; // Заполняем массив textbookDetail данными из API
+                    if (this.textbookDetail.length > 0) {
+                        this.inventNumber = this.textbookDetail[0].inv.split('.')[0];
+                    } else {
+                        this.inventNumber = 0
+                    }
                 })
                 .catch(error => {
                     console.error('Error fetching books:', error);
@@ -46,10 +53,13 @@ new Vue({
         addInvent() {
             this.addingInventory = true; // Блокируем элементы ввода
             const isbnToFind = this.isbn;
-            const newInventNumber = this.inventCount;
+            const newInventNumber = this.inventNumber;
+            const newInventCount = this.inventCount;
+            console.log(isbnToFind, newInventNumber, newInventCount)
+
 
             // Выполнение запроса к API
-            axios.post('/api/add_invent/', { isbn: isbnToFind, invent_number: newInventNumber })
+            axios.post('/api/add_invent/', { isbn: isbnToFind, invent_number: newInventNumber, invent_count: newInventNumber })
                 .then(response => {
                     // Обработка успешного ответа
                     // ...
@@ -81,5 +91,8 @@ new Vue({
             }
         }
         })
-    }
+    },
+    computed: {
+
+      },
 });
