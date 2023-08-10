@@ -21,6 +21,12 @@ class TextBookSerializer(serializers.ModelSerializer):
         }
 
 
+class InventSerializer(serializers.Serializer):
+    isbn = serializers.CharField()
+    inv = serializers.IntegerField()
+    inv_count = serializers.IntegerField(required=False, default=1)
+
+
 class TextBookInventSerializer(serializers.ModelSerializer):
     class Meta:
         model = TextBookInvent

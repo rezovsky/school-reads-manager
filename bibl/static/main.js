@@ -55,14 +55,11 @@ new Vue({
             const isbnToFind = this.isbn;
             const newInventNumber = this.inventNumber;
             const newInventCount = this.inventCount;
-            console.log(isbnToFind, newInventNumber, newInventCount)
-
 
             // Выполнение запроса к API
-            axios.post('/api/add_invent/', { isbn: isbnToFind, invent_number: newInventNumber, invent_count: newInventNumber })
+            axios.post('/api/invent/', { isbn: isbnToFind, inv: newInventNumber, inv_count: newInventCount })
                 .then(response => {
-                    // Обработка успешного ответа
-                    // ...
+                    this.textbookDetail = response.data.invs
 
                     // После выполнения запроса, разблокируем элементы ввода
                     this.addingInventory = false;

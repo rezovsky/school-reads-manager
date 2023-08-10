@@ -8,54 +8,57 @@
 {% verbatim %}
 <div id="app">
     <nav aria-label="breadcrumb">
-      <ol class="breadcrumb p-3 bg-body-tertiary rounded-3">
-        <li class="breadcrumb-item">
-          <a class="link-body-emphasis fw-semibold text-decoration-none" href="../">Домой</a>
-        </li>
-        <li v-if="isbn" class="breadcrumb-item">
-          <a @click.prevent="goBack" class="link-body-emphasis fw-semibold text-decoration-none" href="" >Учебники</a>
-        </li>
-        <li v-else class="breadcrumb-item active" aria-current="page">Учебники</li>
-        <li v-if="isbn" class="breadcrumb-item active" aria-current="page">
-          {{isbn}}
-        </li>
-      </ol>
+        <ol class="breadcrumb p-3 bg-body-tertiary rounded-3">
+            <li class="breadcrumb-item">
+                <a class="link-body-emphasis fw-semibold text-decoration-none" href="../">Домой</a>
+            </li>
+            <li v-if="isbn" class="breadcrumb-item">
+                <a @click.prevent="goBack" class="link-body-emphasis fw-semibold text-decoration-none"
+                   href="">Учебники</a>
+            </li>
+            <li v-else class="breadcrumb-item active" aria-current="page">Учебники</li>
+            <li v-if="isbn" class="breadcrumb-item active" aria-current="page">
+                {{isbn}}
+            </li>
+        </ol>
     </nav>
 
     <div v-if="!isbn">
         <table class="table table-striped">
             <thead>
-                <tr>
-                    <th>ISBN</th>
-                    <th>Название</th>
-                    <th>Класс</th>
-                    <th>Автор</th>
-                    <th>Год издания</th>
-                    <th>Издатель</th>
-                    <th>Количество</th>
-                </tr>
+            <tr>
+                <th>ISBN</th>
+                <th>Название</th>
+                <th>Класс</th>
+                <th>Автор</th>
+                <th>Год издания</th>
+                <th>Издатель</th>
+                <th>Количество</th>
+            </tr>
             </thead>
             <tbody>
-                <tr v-for="textbook in textbooks" :key="textbook.isbn" @click="loadTextbookDetails(textbook.isbn)"  class="clickable-row">
-                    <td>{{ textbook.isbn }}</td>
-                    <td>{{ textbook.data.title }}</td>
-                    <td>{{ textbook.data.clas }}</td>
-                    <td>{{ textbook.data.autor }}</td>
-                    <td>{{ textbook.data.year }}</td>
-                    <td>{{ textbook.data.publisher }}</td>
-                    <td>{{ textbook.data.invent_count }}</td>
-                </tr>
+            <tr v-for="textbook in textbooks" :key="textbook.isbn" @click="loadTextbookDetails(textbook.isbn)"
+                class="clickable-row">
+                <td>{{ textbook.isbn }}</td>
+                <td>{{ textbook.data.title }}</td>
+                <td>{{ textbook.data.clas }}</td>
+                <td>{{ textbook.data.autor }}</td>
+                <td>{{ textbook.data.year }}</td>
+                <td>{{ textbook.data.publisher }}</td>
+                <td>{{ textbook.data.invent_count }}</td>
+            </tr>
             </tbody>
         </table>
     </div>
     <div v-if="isbn">
 
         <nav class="d-flex align-items-center">
-          <a v-if="textbookDetail.length > 0" :href="'/print/multi/' + textbookDetail[0]?.isbn" target="_blank" class="btn btn-primary mb-3 mx-2 mt-3">
-            Печать всех
-          </a>
+            <a v-if="textbookDetail.length > 0" :href="'/print/multi/' + textbookDetail[0]?.isbn" target="_blank"
+               class="btn btn-primary mb-3 mx-2 mt-3">
+                Печать всех
+            </a>
 
-          <span class="badge d-flex align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle ml-2">
+            <span class="badge d-flex align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle ml-2">
               <span class="text-muted my-2 ms-2">Инвентарный номер:</span>
               <input type="number" v-model="inventNumber" min="0" class="mb-0 ms-2" style="width: 100px;">
               <span class="text-muted my-2 ms-2">X</span>
@@ -67,20 +70,21 @@
         <h3>Учебник {{isbn}}: {{bookdata.title}} - {{bookdata.clas}} класс</h3>
         <table v-if="textbookDetail.length > 0" class="table table-striped">
             <thead>
-                <tr>
-                    <th>Инвентарный номер</th>
-                    <th>Печать</th>
-                </tr>
+            <tr>
+                <th>Инвентарный номер</th>
+                <th>Печать</th>
+            </tr>
             </thead>
             <tbody>
-                <tr v-for="inventNumber in textbookDetail" :key="inventNumber.id">
-                    <td>{{ inventNumber.inv }}</td>
-                    <td>
-                        <a :href="'/print/single/' + inventNumber.isbn + '/' + inventNumber.inv" target="_blank" class="btn btn-primary btn-sm">
-                            Печать
-                        </a>
-                    </td>
-                </tr>
+            <tr v-for="inventNumber in textbookDetail" :key="inventNumber.id">
+                <td>{{ inventNumber.inv }}</td>
+                <td>
+                    <a :href="'/print/single/' + inventNumber.isbn + '/' + inventNumber.inv" target="_blank"
+                       class="btn btn-primary btn-sm">
+                        Печать
+                    </a>
+                </td>
+            </tr>
             </tbody>
         </table>
     </div>

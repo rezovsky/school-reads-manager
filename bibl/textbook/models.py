@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class TextBook(models.Model):
     isbn = models.CharField('ISBN', max_length=20, unique=True)
     title = models.CharField('Название', max_length=50)
@@ -12,13 +13,13 @@ class TextBook(models.Model):
 
     list_display = ('isbn', 'title')
 
-
     def __str__(self):
         return self.isbn
 
     class Meta:
         verbose_name = 'Учебник'
         verbose_name_plural = "Учебники"
+
 
 class TextBookInvent(models.Model):
     inv = models.CharField('Инвентарный номер', max_length=10)
@@ -31,6 +32,7 @@ class TextBookInvent(models.Model):
     class Meta:
         verbose_name = 'Инвентарный номер'
         verbose_name_plural = "Инвентарные номера"
+
 
 class TextBookArhiv(models.Model):
     inv = models.CharField('Инвентарный номер', max_length=10)
