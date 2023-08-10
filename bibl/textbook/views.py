@@ -85,7 +85,7 @@ class InventView(APIView):
                 img.save(filename)
 
             invs = TextBookInvent.objects.filter(isbn=isbn).order_by('inv')
-            inv_serialize = [{'inv': inv.inv} for inv in invs]
+            inv_serialize = [{'inv': inv.inv, 'isbn': inv.isbn.isbn, 'date': inv.date} for inv in invs]
 
             return Response({'message': 'Запись успешно создана', 'invs': inv_serialize}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
