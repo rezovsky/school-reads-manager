@@ -7,6 +7,21 @@
 {% block content %}
 {% verbatim %}
 <div id="app">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb p-3 bg-body-tertiary rounded-3">
+        <li class="breadcrumb-item">
+          <a class="link-body-emphasis fw-semibold text-decoration-none" href="../">Домой</a>
+        </li>
+        <li v-if="isbn" class="breadcrumb-item">
+          <a @click.prevent="goBack" class="link-body-emphasis fw-semibold text-decoration-none" href="" >Учебники</a>
+        </li>
+        <li v-else class="breadcrumb-item active" aria-current="page">Учебники</li>
+        <li v-if="isbn" class="breadcrumb-item active" aria-current="page">
+          {{isbn}}
+        </li>
+      </ol>
+    </nav>
+
     <div v-if="!isbn">
         <table class="table table-striped">
             <thead>
@@ -23,24 +38,30 @@
             <tbody>
                 <tr v-for="textbook in textbooks" :key="textbook.isbn" @click="loadTextbookDetails(textbook.isbn)"  class="clickable-row">
                     <td>{{ textbook.isbn }}</td>
-                    <td>{{ textbook.title }}</td>
-                    <td>{{ textbook.autor }}</td>
-                    <td>{{ textbook.year }}</td>
-                    <td>{{ textbook.clas }}</td>
-                    <td>{{ textbook.publisher }}</td>
-                    <td>{{ textbook.invent_count }}</td>
+                    <td>{{ textbook.data.title }}</td>
+                    <td>{{ textbook.data.autor }}</td>
+                    <td>{{ textbook.data.year }}</td>
+                    <td>{{ textbook.data.clas }}</td>
+                    <td>{{ textbook.data.publisher }}</td>
+                    <td>{{ textbook.data.invent_count }}</td>
                 </tr>
             </tbody>
         </table>
     </div>
     <div v-if="isbn">
-        <a @click="goBack" class="btn btn-secondary mb-3">
-            Назад к списку
-        </a>
-        <a v-if="textbookDetail.length > 0" :href="'/print/multi/' + textbookDetail[0]?.isbn" target="_blank" class="btn btn-primary mb-3 ml-2">
+
+        <nav class="d-flex align-items-center">
+          <a v-if="textbookDetail.length > 0" :href="'/print/multi/' + textbookDetail[0]?.isbn" target="_blank" class="btn btn-primary mb-3 mx-2 mt-2">
             Печать всех
-        </a>
-        <h2>Инвентаризация книги {{isbn}} {{name}}</h2>
+          </a>
+
+          <span class="badge d-flex align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle ml-2">
+            <input type="number" v-model="inventCount" min="1" class="mb-0" style="width: 50px;">
+            <button @click="addInvent" :disabled="addingInventory" class="btn btn-primary mb-0 ms-2">Добавить</button>
+          </span>
+        </nav>
+
+        <h3>Учебник {{isbn}}: {{bookdata.title}} - {{bookdata.clas}} класс</h3>
         <table v-if="textbookDetail.length > 0" class="table table-striped">
             <thead>
                 <tr>

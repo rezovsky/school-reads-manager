@@ -4,26 +4,23 @@ new Vue({
         textbooks: [], // Массив для списка учебников
         textbookDetail: [], // Массив для деталей учебника
         isbn: '', // ISBN текущего учебника
-        name: '',
-    },
-    mounted() {
-        this.fetchTextBooks(); // Вызов метода для загрузки списка учебников при монтировании компонента
+        bookdata: [],
+        inventCount: 1,
+        addingInventory: false
     },
     methods: {
         // Метод для загрузки списка учебников
-        fetchTextBooks() {
-            axios.get('/api/textbooks/')
-                .then(response => {
-                    this.textbooks = response.data; // Заполняем массив textbooks данными из API
-                })
-                .catch(error => {
-                    console.error('Error fetching books:', error);
-                });
-        },
+          fetchTextBooks() {
+            return axios.get('/api/textbooks/')
+              .then(response => {
+                this.textbooks = response.data;
+              });
+          },
         // Метод для загрузки деталей учебника по ISBN
         loadTextbookDetails(isbn) {
             this.isbn = isbn; // Устанавливаем текущий ISBN
-            this.name = 'name'
+            this.bookdata = this.textbooks.find(textbook => textbook.isbn === isbn).data
+
             // Добавляем новый URL в историю браузера
             window.history.pushState({}, "", "/textbook/" + isbn);
             this.textbookDetail = []; // Очищаем массив с деталями учебника
@@ -46,8 +43,32 @@ new Vue({
             this.isbn = ''; // Очищаем текущий ISBN
             this.textbookDetail = []; // Очищаем массив с деталями учебника
         },
+        addInvent() {
+            this.addingInventory = true; // Блокируем элементы ввода
+            const isbnToFind = this.isbn;
+            const newInventNumber = this.inventCount;
+
+            // Выполнение запроса к API
+            axios.post('/api/add_invent/', { isbn: isbnToFind, invent_number: newInventNumber })
+                .then(response => {
+                    // Обработка успешного ответа
+                    // ...
+
+                    // После выполнения запроса, разблокируем элементы ввода
+                    this.addingInventory = false;
+                })
+                .catch(error => {
+                    // Обработка ошибки
+                    console.error('Error adding inventory:', error);
+
+                    // При ошибке также разблокируем элементы ввода
+                    this.addingInventory = false;
+                });
+        },
     },
     created() {
+        this.fetchTextBooks() // Вызов метода для загрузки списка учебников при создании компонента
+            .then(() => {
         // Получаем путь URL и извлекаем ISBN из него при создании компонента
         const path = window.location.pathname;
         const pathSegments = path.split('/');
@@ -58,7 +79,7 @@ new Vue({
             if (this.isbn) {
                 this.loadTextbookDetails(this.isbn); // Вызываем метод для загрузки деталей учебника по ISBN
             }
-
         }
+        })
     }
 });

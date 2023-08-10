@@ -3,14 +3,22 @@ from .models import TextBook, TextBookInvent
 
 
 class TextBookSerializer(serializers.ModelSerializer):
-    invent_count = serializers.SerializerMethodField()
+    data = serializers.SerializerMethodField()
 
     class Meta:
         model = TextBook
-        fields = ['isbn', 'title', 'autor', 'year', 'clas', 'publisher', 'invent_count']
+        fields = ('isbn', 'data')
 
-    def get_invent_count(self, obj):
-        return TextBookInvent.objects.filter(isbn=obj.isbn).count()
+    def get_data(self, obj):
+        invent_count = TextBookInvent.objects.filter(isbn=obj.isbn).count()
+        return {
+            "title": obj.title,
+            "autor": obj.autor,
+            "year": obj.year,
+            "clas": obj.clas,
+            "publisher": obj.publisher,
+            "invent_count": invent_count,
+        }
 
 
 class TextBookInventSerializer(serializers.ModelSerializer):
