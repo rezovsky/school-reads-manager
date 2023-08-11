@@ -23,7 +23,7 @@ class TextBookSerializer(serializers.ModelSerializer):
 
 class InventSerializer(serializers.Serializer):
     isbn = serializers.CharField()
-    inv = serializers.IntegerField()
+    inv = serializers.CharField()
     inv_count = serializers.IntegerField(required=False, default=1)
 
 

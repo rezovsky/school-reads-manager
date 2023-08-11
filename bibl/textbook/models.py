@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 
 class TextBook(models.Model):
@@ -9,7 +10,7 @@ class TextBook(models.Model):
     clas = models.CharField('Класс', max_length=5)
     iteration = models.CharField('Номер издание', max_length=3)
     publisher = models.CharField('Издатель', max_length=50)
-    date = models.DateTimeField('Дата добавления')
+    date = models.DateTimeField('Дата добавления', default=timezone.now)
 
     list_display = ('isbn', 'title')
 
@@ -24,7 +25,7 @@ class TextBook(models.Model):
 class TextBookInvent(models.Model):
     inv = models.CharField('Инвентарный номер', max_length=10)
     isbn = models.ForeignKey(TextBook, on_delete=models.CASCADE, to_field='isbn')
-    date = models.DateTimeField('Дата добавления')
+    date = models.DateTimeField('Дата добавления', default=timezone.now)
 
     def __str__(self):
         return self.inv
@@ -37,7 +38,7 @@ class TextBookInvent(models.Model):
 class TextBookArhiv(models.Model):
     inv = models.CharField('Инвентарный номер', max_length=10)
     isbn = models.CharField('ISBN', max_length=20)
-    date = models.DateTimeField('Дата добавления')
+    date = models.DateTimeField('Дата добавления', default=timezone.now)
 
     def __str__(self):
         return self.inv

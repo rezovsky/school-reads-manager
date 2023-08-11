@@ -1,5 +1,8 @@
 import os
+
+import pytz
 from django.db.models import Max
+from django.http import Http404
 from django.shortcuts import render
 from rest_framework import generics, status
 from rest_framework.generics import get_object_or_404
@@ -35,7 +38,8 @@ class InventView(APIView):
             inv_count = serializer.validated_data.get('inv_count', None)
 
             # Получение последнего инвентарного номера
-            last_inv = TextBookInvent.objects.filter(isbn=isbn).aggregate(Max('inv'))['inv__max']
+
+            last_inv = TextBookInvent.objects.filter(isbn=isbn, inv__startswith=str(inv)).last().inv
             if last_inv:
                 parts = last_inv.split('.')
                 last_number = int(parts[-1])
@@ -53,8 +57,7 @@ class InventView(APIView):
 
                 textbook = get_object_or_404(TextBook, isbn=isbn)
 
-                current_date = datetime.now()
-                texbookinvent = TextBookInvent(inv=new_inv, isbn=textbook, date=current_date)
+                texbookinvent = TextBookInvent(inv=new_inv, isbn=textbook)
                 texbookinvent.save()
 
                 qr = qrcode.QRCode(
@@ -84,22 +87,40 @@ class InventView(APIView):
                 filename = os.path.join(path, new_inv.replace('.', '-') + ".png")
                 img.save(filename)
 
-            invs = TextBookInvent.objects.filter(isbn=isbn).order_by('inv')
-            inv_serialize = [{'inv': inv.inv, 'isbn': inv.isbn.isbn, 'date': inv.date} for inv in invs]
-
-            return Response({'message': 'Запись успешно создана', 'invs': inv_serialize}, status=status.HTTP_201_CREATED)
+            return Response({'message': 'Запись успешно создана', 'invs': self.serialize_invent_data(isbn)},
+                            status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, format=None):
         serializer = InventSerializer(data=request.data)
+
+        isbn = request.data.get('isbn')
+        inv = request.data.get('inv')
+        print("Type of isbn:", type(isbn))
+        print("Value of isbn:", isbn)
+        print("Type of inv:", type(inv))
+        print("Value of inv:", inv)
         if serializer.is_valid():
             isbn = serializer.validated_data['isbn']
             inv = serializer.validated_data['inv']
 
-            # Здесь можно выполнить необходимую бизнес-логику для удаления записи
+            # Найдем запись в базе данных
+            try:
+                textbook_invent = TextBookInvent.objects.get(isbn=isbn, inv=inv)
+            except TextBookInvent.DoesNotExist:
+                raise Http404
 
-            return Response({'message': 'Запись успешно удалена'}, status=status.HTTP_204_NO_CONTENT)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            # Удаление записи
+            textbook_invent.delete()
+
+            # Получение и возвращение обновленных данных
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def serialize_invent_data(self, isbn):
+        invs = TextBookInvent.objects.filter(isbn=isbn).order_by('inv')
+        return [{'inv': inv.inv, 'isbn': inv.isbn.isbn, 'date': inv.date} for inv in invs]
 
 
 def index(request, isbn=None):
