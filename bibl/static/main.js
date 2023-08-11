@@ -53,6 +53,12 @@ new Vue({
       this.textbookDetail = []; // Очищаем массив с деталями учебника
       this.fetchTextBooks()
     },
+    focusInventCount() {
+        this.$refs.inventCountInput.focus();
+    },
+    selectAllText(event) {
+        event.target.select();
+    },
     apiInvent(action, inv = null) {
 
       if (action === 'add') {

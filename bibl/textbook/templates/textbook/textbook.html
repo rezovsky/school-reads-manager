@@ -59,13 +59,15 @@
             </a>
 
             <span class="badge d-flex align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle ml-2">
-              <span class="text-muted my-2 ms-2">Инвентарный номер:</span>
-              <input type="number" v-model="inventNumber" min="0" class="mb-0 ms-2" style="width: 100px;">
-              <span class="text-muted my-2 ms-2">X</span>
-              <input type="number" v-model="inventCount" min="1" class="mb-0 ms-2" style="width: 50px;">
-              <button @click="apiInvent('add')" :disabled="addingInventory"
-                      class="btn btn-primary mb-0 ms-2">Добавить</button>
-          </span>
+                <span class="text-muted my-2 ms-2">Инвентарный номер:</span>
+                <input type="number" v-model="inventNumber" min="0" class="mb-0 ms-2" style="width: 100px;"
+                    @keyup.enter="focusInventCount" @focus="selectAllText($event)" >
+                <span class="text-muted my-2 ms-2">X</span>
+                  <input type="number" v-model="inventCount" min="1" class="mb-0 ms-2" style="width: 50px;"
+                     @keyup.enter="apiInvent('add')"  ref="inventCountInput"  @focus="selectAllText($event)" >
+                 <button @click="apiInvent('add')" :disabled="addingInventory"
+                     class="btn btn-primary mb-0 ms-2">Добавить</button>
+            </span>
         </nav>
 
         <h3>Учебник {{isbn}}: {{bookdata.title}} - {{bookdata.clas}} класс</h3>
