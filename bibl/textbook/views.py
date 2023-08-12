@@ -1,7 +1,5 @@
 import os
 
-import pytz
-from django.db.models import Max
 from django.http import Http404
 from django.shortcuts import render
 from rest_framework import generics, status
@@ -10,7 +8,6 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from .models import TextBook, TextBookInvent, TextBookArhiv
-from datetime import datetime
 import qrcode
 from .serializer import TextBookSerializer, TextBookInventSerializer, InventSerializer
 
@@ -18,6 +15,10 @@ from .serializer import TextBookSerializer, TextBookInventSerializer, InventSeri
 class TextBookView(ModelViewSet):
     queryset = TextBook.objects.all().order_by('clas', 'title')
     serializer_class = TextBookSerializer
+
+    def create(self, request, *args, **kwargs):
+        print(request.data)  # Вывод данных из запроса в консоль
+        return Response(request.data, status=status.HTTP_201_CREATED)
 
 
 class TextBookInventList(generics.ListAPIView):
@@ -31,6 +32,7 @@ class TextBookInventList(generics.ListAPIView):
 
 class InventView(APIView):
     def post(self, request, format=None):
+
         serializer = InventSerializer(data=request.data)
         if serializer.is_valid():
             isbn = serializer.validated_data['isbn']
@@ -39,9 +41,10 @@ class InventView(APIView):
 
             # Получение последнего инвентарного номера
 
-            last_inv = TextBookInvent.objects.filter(isbn=isbn, inv__startswith=str(inv)).last().inv
-            if last_inv:
-                parts = last_inv.split('.')
+            last_inv = TextBookInvent.objects.filter(isbn=isbn, inv__startswith=str(inv)).order_by('-inv').first()
+
+            if last_inv is not None:
+                parts = last_inv.inv.split('.')
                 last_number = int(parts[-1])
             else:
                 last_number = 0
@@ -50,15 +53,14 @@ class InventView(APIView):
 
             # Цикл создания записей и генерации QR-кодов
             for n in range(last_number, qol):
-                strn = str((n + 1))
-                for q in range((3 - len(strn))):
-                    strn = '0' + strn
-                new_inv = str(inv) + '.' + strn
+                nuls = str((n + 1))
+                nuls = "0" * (3 - len(nuls)) + nuls
+                new_inv = str(inv) + '.' + nuls
 
                 textbook = get_object_or_404(TextBook, isbn=isbn)
 
-                texbookinvent = TextBookInvent(inv=new_inv, isbn=textbook)
-                texbookinvent.save()
+                inventiveness = TextBookInvent(inv=new_inv, isbn=textbook)
+                inventiveness.save()
 
                 qr = qrcode.QRCode(
                     version=1,
@@ -86,8 +88,9 @@ class InventView(APIView):
 
                 filename = os.path.join(path, new_inv.replace('.', '-') + ".png")
                 img.save(filename)
-
-            return Response({'message': 'Запись успешно создана', 'invs': self.serialize_invent_data(isbn)},
+            invs = TextBookInvent.objects.filter(isbn=isbn).order_by('inv')
+            serialize_invent_data = [{'inv': inv.inv, 'isbn': inv.isbn.isbn, 'date': inv.date} for inv in invs]
+            return Response({'message': 'Запись успешно создана', 'invs': serialize_invent_data},
                             status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -96,10 +99,6 @@ class InventView(APIView):
 
         isbn = request.data.get('isbn')
         inv = request.data.get('inv')
-        print("Type of isbn:", type(isbn))
-        print("Value of isbn:", isbn)
-        print("Type of inv:", type(inv))
-        print("Value of inv:", inv)
         if serializer.is_valid():
             isbn = serializer.validated_data['isbn']
             inv = serializer.validated_data['inv']
@@ -117,10 +116,6 @@ class InventView(APIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def serialize_invent_data(self, isbn):
-        invs = TextBookInvent.objects.filter(isbn=isbn).order_by('inv')
-        return [{'inv': inv.inv, 'isbn': inv.isbn.isbn, 'date': inv.date} for inv in invs]
 
 
 def index(request, isbn=None):

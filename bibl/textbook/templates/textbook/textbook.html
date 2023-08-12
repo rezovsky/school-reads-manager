@@ -1,5 +1,4 @@
 {% extends 'main/base.html' %}
-
 {% block title %}
 Учебники
 {% endblock %}
@@ -24,6 +23,74 @@
     </nav>
 
     <div v-if="!isbn">
+
+
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTextBook"
+        @click="focusToElementFromOpenModal('isbnField')">
+            Добавить
+        </button>
+
+<div class="modal fade" id="addTextBook" tabindex="-1" aria-labelledby="addTextBookLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addTextBookLabel">Добавление учебника</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="newTextBookIsbn" class="form-label">ISBN</label>
+                    <input type="text" class="form-control" id="newTextBookIsbn" v-model="newTextBookIsbn" ref="isbnField"
+                           @keyup.enter="focusToElement('titleField')" @focus="selectAllText($event)">
+                    <small class="text-danger" v-if="newTextBookIsbnError">{{ newTextBookIsbnError }}</small>
+                </div>
+                <div class="mb-3">
+                    <label for="newTextBookTitle" class="form-label">Название</label>
+                    <input type="text" class="form-control" id="newTextBookTitle" v-model="newTextBookTitle" ref="titleField"
+                           @keyup.enter="focusToElement('autorField')" @focus="selectAllText($event)">
+                </div>
+                <div class="mb-3">
+                    <label for="newTextBookAutor" class="form-label">Автор</label>
+                    <input type="text" class="form-control" id="newTextBookAutor" v-model="newTextBookAutor" ref="autorField"
+                           @keyup.enter="focusToElement('yearField')" @focus="selectAllText($event)">
+                </div>
+
+                <div class="mb-3">
+                    <label for="newTextBookInputYear" class="form-label">Год выпуска</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="newTextBookInputYear" ref="yearField"
+                               v-model="selectedYear" @keyup.enter="focusToElement('clasField')" @focus="selectAllText($event)">
+                        <select class="form-select" id="newTextBookSelectedYear" name="newTextBookSelectedYear" v-model="selectedYear"
+                                @change="focusToElement('clasField')">
+                            <option v-for="year in yearOptions" :key="year" :value="year">{{ year }}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="newTextBookClas" class="form-label">Класс</label>
+                    <input type="text" class="form-control" id="newTextBookClas" v-model="newTextBookClas" ref="clasField"
+                           @keyup.enter="focusToElement('iterationField')" @focus="selectAllText($event)">
+                </div>
+                <div class="mb-3">
+                    <label for="newTextBookIteration" class="form-label">Номер издания</label>
+                    <input type="text" class="form-control" id="newTextBookIteration" v-model="newTextBookIteration" ref="iterationField"
+                           @keyup.enter="focusToElement('publisherField')" @focus="selectAllText($event)">
+                </div>
+                <div class="mb-3">
+                    <label for="newTextBookPublisher" class="form-label">Издатель</label>
+                    <input type="text" class="form-control" id="newTextBookPublisher" v-model="newTextBookPublisher" ref="publisherField"
+                           @keyup.enter="focusToElement('addButton')" @focus="selectAllText($event)">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="closeModalButton"  data-bs-dismiss="modal">Закрыть</button>
+                <button type="button" class="btn btn-primary" id="addButton" ref="addButton" @click="addTextBook">Добавить</button>
+            </div>
+        </div>
+    </div>
+</div>
+
         <table class="table table-striped">
             <thead>
             <tr>
@@ -61,7 +128,7 @@
             <span class="badge d-flex align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle ml-2">
                 <span class="text-muted my-2 ms-2">Инвентарный номер:</span>
                 <input type="number" v-model="inventNumber" min="0" class="mb-0 ms-2" style="width: 100px;"
-                    @keyup.enter="focusInventCount" @focus="selectAllText($event)" >
+                    @keyup.enter="focusToElement('inventCountInput')" @focus="selectAllText($event)" >
                 <span class="text-muted my-2 ms-2">X</span>
                   <input type="number" v-model="inventCount" min="1" class="mb-0 ms-2" style="width: 50px;"
                      @keyup.enter="apiInvent('add')"  ref="inventCountInput"  @focus="selectAllText($event)" >
@@ -100,4 +167,6 @@
     </div>
 </div>
 {% endverbatim %}
+{% load static %}
+<script src="{% static 'textbook.js' %}"></script>
 {% endblock %}

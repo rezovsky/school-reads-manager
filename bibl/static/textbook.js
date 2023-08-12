@@ -8,6 +8,15 @@ new Vue({
     inventCount: 1,
     inventNumber: 0,
     addingInventory: false,
+    yearOptions: [],
+    selectedYear: [],
+      newTextBookIsbn: '',
+      newTextBookTitle: '',
+      newTextBookAutor: '',
+      newTextBookClas: '',
+      newTextBookIteration: '',
+      newTextBookPublisher: '',
+      newTextBookIsbnError: '',
   },
   methods: {
     // Метод для загрузки списка учебников
@@ -53,8 +62,59 @@ new Vue({
       this.textbookDetail = []; // Очищаем массив с деталями учебника
       this.fetchTextBooks()
     },
-    focusInventCount() {
-        this.$refs.inventCountInput.focus();
+    focusToElement(targetElement) {
+        this.$refs[targetElement].focus();
+    },
+    focusToElementFromOpenModal(targetElement) {
+        setTimeout(() => {
+            this.$refs[targetElement].focus();
+        }, 500);
+    },
+    addTextBook() {
+        const newBook = {
+          isbn: this.newTextBookIsbn,
+              title: this.newTextBookTitle,
+              autor: this.newTextBookAutor,
+              year: this.selectedYear,
+              clas: this.newTextBookClas,
+              iteration: this.newTextBookIteration,
+              publisher: this.newTextBookPublisher,
+
+        };
+        console.log(newBook)
+
+        axios.post('/api/textbooks/', newBook) // Замените на ваш адрес API
+          .then(response => {
+            // Здесь вы можете обработать успешный ответ от сервера, если необходимо
+            console.log('Учебник успешно добавлен:', response.data);
+            // Очистите поля модального окна после успешного добавления
+            this.clearModalFields();
+            // Закройте модальное окно
+            this.closeModal()
+            this.fetchTextBooks()
+          })
+          .catch(error => {
+            console.error('Ошибка при добавлении учебника:', error);
+            console.log(error.response.data)
+            if (error.response.data.isbn){
+                this.newTextBookIsbnError = error.response.data.isbn[0]
+            }
+
+
+          });
+      },
+    clearModalFields() {
+        this.newTextBookIsbn = '';
+        this.newTextBookTitle = '';
+        this.newTextBookAutor = '';
+        this.selectedYear = '';
+        this.newTextBookClas = '';
+        this.newTextBookIteration = '';
+        this.newTextBookPublisher = '';
+        this.newTextBookIsbnError = '';
+    },
+    closeModal() {
+        document.getElementById('closeModalButton').click();
     },
     selectAllText(event) {
         event.target.select();
@@ -125,6 +185,10 @@ new Vue({
           }
         }
       });
+    const currentYear = new Date().getFullYear();
+    for (let i = currentYear; i >= currentYear - 15; i--) {
+        this.yearOptions.push(i);
+    }
   },
   computed: {
 
