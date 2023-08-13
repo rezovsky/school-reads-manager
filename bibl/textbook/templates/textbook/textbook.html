@@ -13,7 +13,7 @@
             </li>
             <li v-if="isbn" class="breadcrumb-item">
                 <a @click.prevent="goBack" class="link-body-emphasis fw-semibold text-decoration-none"
-                   href="">Учебники</a>
+                   href="../textbook/">Учебники</a>
             </li>
             <li v-else class="breadcrumb-item active" aria-current="page">Учебники</li>
             <li v-if="isbn" class="breadcrumb-item active" aria-current="page">
@@ -132,6 +132,32 @@
     </div>
     <div v-if="isbn">
 
+    <h4>Учебник {{isbn}}:</h4>
+  <div class="d-flex">
+    <span v-for="(value, key) in bookdata" :key="key" v-if="key !== 'invent_count'">
+        <span class="item-text mx-3 fs-8">{{ namesOfField[key] }}:</span>
+        <span class="badge d-flex align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle ml-2 mx-2">
+      <span class="item text-muted my-2 ms-2">
+        <span v-if="editingIndex === key" class="input-group mb-2">
+          <input v-model="editedValue" class="form-control" :ref="'editing' + key"
+          @keyup.enter="saveItem(key)">
+          <button class="btn btn-success mx-2" @click="saveItem(key)">
+            <i class="fas fa-check"></i>
+          </button>
+        </span>
+        <span v-else class="d-flex align-items-center">
+
+          <span class="item-text flex-grow-1 fs-6">{{ value }}</span>
+          <button class="btn btn-primary ms-2" @click="toggleEditing(key)">
+            <i class="fas fa-pencil-alt"></i>
+          </button>
+        </span>
+      </span>
+        </span>
+    </span>
+  </div>
+        <br>
+
         <nav class="d-flex align-items-center">
             <a v-if="textbookDetail.length > 0" :href="'/print/multi/' + textbookDetail[0]?.isbn" target="_blank"
                class="btn btn-primary mb-3 mx-2 mt-3">
@@ -150,7 +176,6 @@
             </span>
         </nav>
 
-        <h3>Учебник {{isbn}}: {{bookdata.title}} - {{bookdata.clas}} класс</h3>
         <table v-if="textbookDetail.length > 0" class="table table-striped">
             <thead>
             <tr>

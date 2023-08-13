@@ -33,6 +33,22 @@ class TextBookView(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def put(self, request, isbn):
+        try:
+            instance = TextBook.objects.get(isbn=isbn)
+        except TextBook.DoesNotExist:
+            return Response({'error': 'TextBook not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = self.serializer_class(instance, data=request.data, partial=True)
+        try:
+            if serializer.is_valid():
+                serializer.save()
+                serialized_data = serializer.data
+                return Response(serialized_data, status=status.HTTP_200_OK)
+        except IntegrityError as e:
+            return Response({'error': 'ISBN already exists.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class TextBookInventList(generics.ListAPIView):
     serializer_class = TextBookInventSerializer

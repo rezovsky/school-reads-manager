@@ -19,6 +19,7 @@ urlpatterns = [
     path('print/', include('print.urls')),
     path('api/textbook/<str:isbn>/', TextBookInventList.as_view(), name='textbook-invent-list'),
     path('api/textbooks/', TextBookView.as_view(), name='textbook-add'),
+    path('api/textbooks/<str:isbn>/', TextBookView.as_view(), name='textbook-detail'),
     path('api/invent/', InventView.as_view(), name='textbook-invent-add'),
 ]
 

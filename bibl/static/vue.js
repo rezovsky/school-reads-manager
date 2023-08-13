@@ -358,11 +358,11 @@
       /**
        * Show production mode tip message on boot?
        */
-      productionTip: true,
+      productionTip: false,
       /**
        * Whether to enable devtools
        */
-      devtools: true,
+      devtools: false,
       /**
        * Whether to record perf
        */

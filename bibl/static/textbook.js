@@ -23,6 +23,16 @@ new Vue({
   newTextBookClasError: '',
   newTextBookIterationError: '',
   newTextBookPublisherError: '',
+        editingIndex: null,
+      editedValue: "",
+    namesOfField: {
+      "isbn": "ISBN",
+      "title": "Название",
+      "autor": "Автор",
+      "year": "Год выпуска",
+      "clas": "Класс",
+      "publisher": "Издатель",
+    },
   },
   methods: {
     // Метод для загрузки списка учебников
@@ -62,7 +72,10 @@ new Vue({
         });
     },
     // Метод для возврата к списку учебников
-    goBack() {
+    goBack(event = null) {
+        if (event) {
+            event.preventDefault();
+        }
       history.pushState({}, null, '/textbook/');
       this.isbn = ''; // Очищаем текущий ISBN
       this.textbookDetail = []; // Очищаем массив с деталями учебника
@@ -72,7 +85,6 @@ new Vue({
         if (event && event.keyCode === 9) {
             event.preventDefault();
         }
-
         this.$refs[targetElement].focus();
     },
     focusToElementFromOpenModal(targetElement) {
@@ -127,6 +139,28 @@ new Vue({
           this.newTextBookIterationError = '';
           this.newTextBookPublisherError = '';
     },
+
+toggleEditing(index) {
+  this.editingIndex = index;
+  this.editedValue = this.bookdata[index];
+  setTimeout(() => {
+            this.$refs['editing' + index][0].focus();
+        }, 100);
+},
+saveItem(index) {
+    const data = {};
+    data[index] = this.editedValue;
+    axios.put('/api/textbooks/' + this.isbn + '/', data)
+          .then(response => {
+              this.bookdata[index] = this.editedValue;
+              this.editingIndex = null;
+          })
+          .catch(error => {
+            // Обработка ошибки
+            console.error('Error adding inventory:', error);
+          });
+},
+
     closeModal() {
         document.getElementById('closeModalButton').click();
     },
