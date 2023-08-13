@@ -1,5 +1,6 @@
 import os
 
+from django.db import IntegrityError
 from django.http import Http404
 from django.shortcuts import render
 from rest_framework import generics, status
@@ -9,16 +10,28 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from .models import TextBook, TextBookInvent, TextBookArhiv
 import qrcode
-from .serializer import TextBookSerializer, TextBookInventSerializer, InventSerializer
+from .serializer import TextBookSerializer, TextBookInventSerializer, InventSerializer, TextBookListSerializer
 
 
-class TextBookView(ModelViewSet):
+class TextBooksList(ModelViewSet):
     queryset = TextBook.objects.all().order_by('clas', 'title')
+    serializer_class = TextBookListSerializer
+
+
+class TextBookView(APIView):
     serializer_class = TextBookSerializer
 
-    def create(self, request, *args, **kwargs):
-        print(request.data)  # Вывод данных из запроса в консоль
-        return Response(request.data, status=status.HTTP_201_CREATED)
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        try:
+            if serializer.is_valid():
+                serializer.save()
+                serialized_data = serializer.data
+                return Response(serialized_data, status=status.HTTP_201_CREATED)
+        except IntegrityError as e:
+            return Response({'error': 'ISBN already exists.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class TextBookInventList(generics.ListAPIView):

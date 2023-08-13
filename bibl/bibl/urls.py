@@ -5,10 +5,10 @@ from django.urls import path, include
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from rest_framework.routers import SimpleRouter
 
-from textbook.views import TextBookView, TextBookInventList, InventView
+from textbook.views import TextBookView, TextBookInventList, InventView, TextBooksList
 
 router = SimpleRouter()
-router.register('api/textbooks', TextBookView, basename='textbooks')
+router.register('api/textbookslist', TextBooksList, basename='textbookslist')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -18,6 +18,7 @@ urlpatterns = [
     path('user/', include('user.urls')),
     path('print/', include('print.urls')),
     path('api/textbook/<str:isbn>/', TextBookInventList.as_view(), name='textbook-invent-list'),
+    path('api/textbooks/', TextBookView.as_view(), name='textbook-add'),
     path('api/invent/', InventView.as_view(), name='textbook-invent-add'),
 ]
 

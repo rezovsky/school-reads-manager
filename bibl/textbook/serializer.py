@@ -3,6 +3,12 @@ from .models import TextBook, TextBookInvent
 
 
 class TextBookSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TextBook
+        fields = ('isbn', 'title', 'autor', 'year', 'clas', 'iteration', 'publisher')
+
+
+class TextBookListSerializer(serializers.ModelSerializer):
     data = serializers.SerializerMethodField()
 
     class Meta:

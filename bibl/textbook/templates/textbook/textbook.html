@@ -41,46 +41,59 @@
                 <div class="mb-3">
                     <label for="newTextBookIsbn" class="form-label">ISBN</label>
                     <input type="text" class="form-control" id="newTextBookIsbn" v-model="newTextBookIsbn" ref="isbnField"
-                           @keyup.enter="focusToElement('titleField')" @focus="selectAllText($event)">
+                           @keyup.enter="focusToElement('titleField')" @keydown.tab="focusToElement('titleField', $event)"
+                           @focus="selectAllText($event)">
                     <small class="text-danger" v-if="newTextBookIsbnError">{{ newTextBookIsbnError }}</small>
                 </div>
                 <div class="mb-3">
                     <label for="newTextBookTitle" class="form-label">Название</label>
                     <input type="text" class="form-control" id="newTextBookTitle" v-model="newTextBookTitle" ref="titleField"
-                           @keyup.enter="focusToElement('autorField')" @focus="selectAllText($event)">
+                           @keyup.enter="focusToElement('autorField')"  @keydown.tab="focusToElement('autorField', $event)"
+                           @focus="selectAllText($event)">
+                    <small class="text-danger" v-if="newTextBookTitleError">{{ newTextBookTitleError }}</small>
                 </div>
                 <div class="mb-3">
                     <label for="newTextBookAutor" class="form-label">Автор</label>
                     <input type="text" class="form-control" id="newTextBookAutor" v-model="newTextBookAutor" ref="autorField"
-                           @keyup.enter="focusToElement('yearField')" @focus="selectAllText($event)">
+                           @keyup.enter="focusToElement('yearField')"  @keydown.tab="focusToElement('yearField', $event)"
+                           @focus="selectAllText($event)">
+                    <small class="text-danger" v-if="newTextBookAutorError">{{ newTextBookAutorError }}</small>
                 </div>
 
                 <div class="mb-3">
                     <label for="newTextBookInputYear" class="form-label">Год выпуска</label>
                     <div class="input-group">
                         <input type="text" class="form-control" id="newTextBookInputYear" ref="yearField"
-                               v-model="selectedYear" @keyup.enter="focusToElement('clasField')" @focus="selectAllText($event)">
+                               v-model="selectedYear" @keyup.enter="focusToElement('clasField')"  @keydown.tab="focusToElement('clasField', $event)"
+                               @focus="selectAllText($event)">
                         <select class="form-select" id="newTextBookSelectedYear" name="newTextBookSelectedYear" v-model="selectedYear"
                                 @change="focusToElement('clasField')">
                             <option v-for="year in yearOptions" :key="year" :value="year">{{ year }}</option>
                         </select>
                     </div>
+                    <small class="text-danger" v-if="newTextBookYearError">{{ newTextBookYearError }}</small>
                 </div>
 
                 <div class="mb-3">
                     <label for="newTextBookClas" class="form-label">Класс</label>
                     <input type="text" class="form-control" id="newTextBookClas" v-model="newTextBookClas" ref="clasField"
-                           @keyup.enter="focusToElement('iterationField')" @focus="selectAllText($event)">
+                           @keyup.enter="focusToElement('iterationField')"  @keydown.tab="focusToElement('iterationField', $event)"
+                           @focus="selectAllText($event)">
+                    <small class="text-danger" v-if="newTextBookClasError">{{ newTextBookClasError }}</small>
                 </div>
                 <div class="mb-3">
                     <label for="newTextBookIteration" class="form-label">Номер издания</label>
                     <input type="text" class="form-control" id="newTextBookIteration" v-model="newTextBookIteration" ref="iterationField"
-                           @keyup.enter="focusToElement('publisherField')" @focus="selectAllText($event)">
+                           @keyup.enter="focusToElement('publisherField')"  @keydown.tab="focusToElement('publisherField', $event)"
+                           @focus="selectAllText($event)">
+                    <small class="text-danger" v-if="newTextBookIterationError">{{ newTextBookIterationError }}</small>
                 </div>
                 <div class="mb-3">
                     <label for="newTextBookPublisher" class="form-label">Издатель</label>
                     <input type="text" class="form-control" id="newTextBookPublisher" v-model="newTextBookPublisher" ref="publisherField"
-                           @keyup.enter="focusToElement('addButton')" @focus="selectAllText($event)">
+                           @keyup.enter="focusToElement('addButton')"  @keydown.tab="focusToElement('addButton', $event)"
+                           @focus="selectAllText($event)">
+                    <small class="text-danger" v-if="newTextBookPublisherError">{{ newTextBookPublisherError }}</small>
                 </div>
             </div>
             <div class="modal-footer">

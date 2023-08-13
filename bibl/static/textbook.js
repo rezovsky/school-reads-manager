@@ -16,12 +16,18 @@ new Vue({
       newTextBookClas: '',
       newTextBookIteration: '',
       newTextBookPublisher: '',
-      newTextBookIsbnError: '',
+  newTextBookIsbnError: '',
+  newTextBookTitleError: '',
+  newTextBookAutorError: '',
+  newTextBookYearError: '',
+  newTextBookClasError: '',
+  newTextBookIterationError: '',
+  newTextBookPublisherError: '',
   },
   methods: {
     // Метод для загрузки списка учебников
     fetchTextBooks() {
-      return axios.get('/api/textbooks/')
+      return axios.get('/api/textbookslist/')
         .then(response => {
           this.textbooks = response.data;
         });
@@ -62,7 +68,11 @@ new Vue({
       this.textbookDetail = []; // Очищаем массив с деталями учебника
       this.fetchTextBooks()
     },
-    focusToElement(targetElement) {
+    focusToElement(targetElement, event = null) {
+        if (event && event.keyCode === 9) {
+            event.preventDefault();
+        }
+
         this.$refs[targetElement].focus();
     },
     focusToElementFromOpenModal(targetElement) {
@@ -73,34 +83,32 @@ new Vue({
     addTextBook() {
         const newBook = {
           isbn: this.newTextBookIsbn,
-              title: this.newTextBookTitle,
-              autor: this.newTextBookAutor,
-              year: this.selectedYear,
-              clas: this.newTextBookClas,
-              iteration: this.newTextBookIteration,
-              publisher: this.newTextBookPublisher,
-
+          title: this.newTextBookTitle,
+          autor: this.newTextBookAutor,
+          year: this.selectedYear,
+          clas: this.newTextBookClas,
+          iteration: this.newTextBookIteration,
+          publisher: this.newTextBookPublisher,
         };
-        console.log(newBook)
 
         axios.post('/api/textbooks/', newBook) // Замените на ваш адрес API
           .then(response => {
-            // Здесь вы можете обработать успешный ответ от сервера, если необходимо
-            console.log('Учебник успешно добавлен:', response.data);
-            // Очистите поля модального окна после успешного добавления
-            this.clearModalFields();
-            // Закройте модальное окно
-            this.closeModal()
-            this.fetchTextBooks()
+            this.fetchTextBooks().then(() => {
+                this.clearModalFields();
+                this.closeModal()
+                this.loadTextbookDetails(response.data.isbn)
+            })
           })
           .catch(error => {
-            console.error('Ошибка при добавлении учебника:', error);
-            console.log(error.response.data)
-            if (error.response.data.isbn){
-                this.newTextBookIsbnError = error.response.data.isbn[0]
+            if (error.response.data){
+                this.newTextBookIsbnError = error.response.data.isbn ? error.response.data.isbn[0] : '';
+                this.newTextBookTitleError = error.response.data.title ? error.response.data.title[0] : '';
+                this.newTextBookAutorError = error.response.data.autor ? error.response.data.autor[0] : '';
+                this.newTextBookYearError = error.response.data.year ? error.response.data.year[0] : '';
+                this.newTextBookClasError = error.response.data.clas ? error.response.data.clas[0] : '';
+                this.newTextBookIterationError = error.response.data.iteration ? error.response.data.iteration[0] : '';
+                this.newTextBookPublisherError = error.response.data.publisher ? error.response.data.publisher[0] : '';
             }
-
-
           });
       },
     clearModalFields() {
@@ -111,7 +119,13 @@ new Vue({
         this.newTextBookClas = '';
         this.newTextBookIteration = '';
         this.newTextBookPublisher = '';
-        this.newTextBookIsbnError = '';
+          this.newTextBookIsbnError = '';
+          this.newTextBookTitleError = '';
+          this.newTextBookAutorError = '';
+          this.newTextBookYearError = '';
+          this.newTextBookClasError = '';
+          this.newTextBookIterationError = '';
+          this.newTextBookPublisherError = '';
     },
     closeModal() {
         document.getElementById('closeModalButton').click();
