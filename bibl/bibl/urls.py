@@ -15,7 +15,7 @@ urlpatterns = [
     path('', include('main.urls')),
     path('textbook/', include('textbook.urls')),
     path('book/', include('book.urls')),
-    path('user/', include('user.urls')),
+    path('reader/', include('reader.urls')),
     path('print/', include('print.urls')),
     path('api/textbook/<str:isbn>/', TextBookInventList.as_view(), name='textbook-invent-list'),
     path('api/textbooks/', TextBookView.as_view(), name='textbook-add'),

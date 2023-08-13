@@ -28,7 +28,7 @@ INSTALLED_APPS = [
     'main',
     'textbook',
     'book',
-    'user',
+    'reader',
     'print'
 ]
 
