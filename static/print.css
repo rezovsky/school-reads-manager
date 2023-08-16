@@ -1,0 +1,26 @@
+html, body{
+    height: 26mm;
+    width: 38mm;
+    margin: 1mm 5mm 1mm 0mm;
+}
+section {
+    writing-mode:vertical-rl;
+    page-break-after: always;
+}
+img {
+    height: 21mm;
+    width: 21mm;
+    margin-top: 2mm;
+}
+div{
+    font-weight: bold;
+    height: 26mm;
+    text-align: center;
+}
+.print-9{
+    font-size: 9pt;
+}
+.print-6{
+    font-size: 6pt;
+}
+

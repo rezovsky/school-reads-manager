@@ -1,0 +1,7 @@
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('single/<str:isbn>/<str:inv>/', views.single, name='print'),
+    path('multi/<str:isbn>/', views.multi, name='multi_print')
+]
