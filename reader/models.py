@@ -6,7 +6,7 @@ from django.db import models
 class Reader(models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
-    age = models.PositiveIntegerField()
+    birth_date = models.DateField()
     clas = models.PositiveIntegerField()
     class_letter = models.CharField(max_length=1)
 

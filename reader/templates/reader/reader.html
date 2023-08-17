@@ -6,7 +6,28 @@
 {% block content %}
 {% verbatim %}
 <div id="app">
-
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Имя</th>
+          <th>Дата рождения</th>
+          <th>Класс</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="reader in readers"
+          :key="reader.id"
+          @click="loadReaderDetails(reader.id)"
+          class="clickable-row"
+        >
+          <td>{{ reader.first_name }} {{ reader.last_name }}</td>
+          <td>{{ formatDate(reader.birth_date) }} ({{ calculateAge(reader.birth_date) }})</td>
+          <td>{{ reader.clas }} {{ reader.class_letter }}</td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
 </div>
 {% endverbatim %}
 {% load static %}
