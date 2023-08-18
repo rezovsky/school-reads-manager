@@ -39,7 +39,6 @@
                     </div>
 
                     <div class="modal-body">
-                        <div>{{errors}}</div>
                         <div v-for="(label, key, index) in namesOfField" :key="key" class="mb-3">
                             <label :for="`newTextBook${key.charAt(0).toUpperCase()}${key.slice(1)}`" class="form-label">{{
                                 label }}</label>
