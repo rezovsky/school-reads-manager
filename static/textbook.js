@@ -3,7 +3,8 @@ import commonMethods from './commonMethods.js';
 new Vue({
     el: '#app',
     data: {
-        textbooks: [], // Массив для списка учебников
+        moduleName: 'textbook',
+        moduleData: [], // Массив для списка учебников
         textbookDetail: [], // Массив для деталей учебника
         isbn: '', // ISBN текущего учебника
         bookdata: [],
@@ -29,17 +30,11 @@ new Vue({
     },
     methods: {
         ...commonMethods.methods,
-        // Метод для загрузки списка учебников
-        fetchTextBooks() {
-            return axios.get('/api/textbookslist/')
-                .then(response => {
-                    this.textbooks = response.data;
-                });
-        },
+
         // Метод для загрузки деталей учебника по ISBN
         loadTextbookDetails(isbn) {
             this.isbn = isbn; // Устанавливаем текущий ISBN
-            this.bookdata = this.textbooks.find(textbook => textbook.isbn === isbn).data;
+            this.bookdata = this.moduleData.find(textbook => textbook.isbn === isbn).data;
 
             // Добавляем новый URL в историю браузера
             window.history.pushState({}, "", "/textbook/" + isbn);
@@ -51,7 +46,7 @@ new Vue({
             });
 
             // Загружаем детали учебника с помощью API запроса
-            axios.get('/api/textbook/' + isbn)
+            axios.get(`/api/${this.moduleName}/` + isbn)
                 .then(response => {
                     this.textbookDetail = response.data; // Заполняем массив textbookDetail данными из API
 
@@ -70,17 +65,17 @@ new Vue({
             if (event) {
                 event.preventDefault();
             }
-            history.pushState({}, null, '/textbook/');
-            this.isbn = ''; // Очищаем текущий ISBN
-            this.textbookDetail = []; // Очищаем массив с деталями учебника
-            this.fetchTextBooks()
+            history.pushState({}, null, `/${this.moduleName}/`);
+            this.isbn = ''; //
+            this.textbookDetail = [];
+            this.fetchModuleData()
         },
 
 
         addItem() {
             axios.post('/api/textbooks/', this.newItems)
                 .then(response => {
-                    this.fetchTextBooks().then(() => {
+                    this.fetchModuleData().then(() => {
                         this.clearModalFields();
                         this.closeModal()
                         this.loadTextbookDetails(response.data.isbn)
@@ -165,12 +160,11 @@ new Vue({
     },
     created() {
         this.initFields()
-        this.fetchTextBooks() // Вызов метода для загрузки списка учебников при создании компонента
-            .then(() => {
+        this.fetchModuleData().then(() => {
                 // Получаем путь URL и извлекаем ISBN из него при создании компонента
                 const path = window.location.pathname;
                 const pathSegments = path.split('/');
-                const isbnIndex = pathSegments.indexOf('textbook') + 1;
+                const isbnIndex = pathSegments.indexOf(this.moduleName) + 1;
 
                 if (isbnIndex > 0 && isbnIndex < pathSegments.length) {
                     this.isbn = pathSegments[isbnIndex];

@@ -64,6 +64,12 @@ export default {
                 }
             }
         },
+        fetchModuleData() {
+            return axios.get(`/api/${this.moduleName}slist/`)
+                .then(response => {
+                    this.moduleData = response.data;
+                });
+        },
 
     }
 };

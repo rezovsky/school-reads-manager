@@ -79,7 +79,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr v-for="textbook in textbooks" :key="textbook.isbn" @click="loadTextbookDetails(textbook.isbn)"
+            <tr v-for="textbook in moduleData" :key="textbook.isbn" @click="loadTextbookDetails(textbook.isbn)"
                 class="clickable-row">
                 <td>{{ textbook.isbn }}</td>
                 <td>{{ textbook.data.title }}</td>
