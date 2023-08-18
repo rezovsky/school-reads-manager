@@ -14,11 +14,12 @@
     {% bootstrap_messages %}
 
     {% load static %}
-    <link rel="stylesheet" href="{% static 'style.css' %}">
+
     <script src="{% static 'vue.js' %}"></script>
     <script src="{% static 'axios.js' %}"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
 
 </head>
 <body>
@@ -30,7 +31,7 @@
       <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto">
         <a class="me-3 py-2 text-dark text-decoration-none" href="{% url 'home' %}">Домой</a>
         <a class="me-3 py-2 text-dark text-decoration-none" href="{% url 'textbook' %}">Учебники</a>
-        <a class="me-3 py-2 text-dark text-decoration-none" href="{% url 'reader' %}">Ученики</a>
+        <a class="me-3 py-2 text-dark text-decoration-none" href="{% url 'reader' %}">Читатели</a>
       </nav>
     </div>
     {% block local_nav %}{% endblock%}

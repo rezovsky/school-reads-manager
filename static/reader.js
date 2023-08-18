@@ -1,32 +1,19 @@
+import commonMethods from './commonMethods.js';
+
 new Vue({
-    el: '#app',
-    data: {
-        readers: [
-            {
-                id: 1,
-                first_name: 'John',
-                last_name: 'Doe',
-                birth_date: '1995-07-15',
-                clas: 10,
-                class_letter: 'A'
-            },
-            {
-                id: 2,
-                first_name: 'Jane',
-                last_name: 'Smith',
-                birth_date: '2002-03-22',
-                clas: 9,
-                class_letter: 'B'
-            },
-        ],
-    },
-    methods: {
+    el: '#app', data: {
+        readers: [{
+            id: 1, first_name: 'John', last_name: 'Doe', birth_date: '1995-07-15', clas: 10, class_letter: 'A'
+        }, {
+            id: 2, first_name: 'Jane', last_name: 'Smith', birth_date: '2002-03-22', clas: 9, class_letter: 'B'
+        },],
+    }, methods: {
+        ...commonMethods.methods,
         // Функция для форматирования даты в ДД-ММ-ГГГГ
         formatDate(date) {
             const parts = date.split('-');
             return `${parts[2]}-${parts[1]}-${parts[0]}`;
-        },
-        // Функция вычисления возраста
+        }, // Функция вычисления возраста
         calculateAge(birthDate) {
             const today = new Date();
             const birthDateObj = new Date(birthDate);
@@ -36,8 +23,7 @@ new Vue({
                 age--;
             }
             return this.ageWithDeclension(age);
-        },
-        // Функция склонения подписи к возрасту
+        }, // Функция склонения подписи к возрасту
         ageWithDeclension(age) {
             if (age >= 11 && age <= 14) {
                 return `${age} лет`;

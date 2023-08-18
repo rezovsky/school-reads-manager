@@ -6,30 +6,112 @@
 {% block content %}
 {% verbatim %}
 <div id="app">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb p-3 bg-body-tertiary rounded-3">
+            <li class="breadcrumb-item">
+                <a class="link-body-emphasis fw-semibold text-decoration-none" href="../">Домой</a>
+            </li>
+            <li v-if="isbn" class="breadcrumb-item">
+                <a @click.prevent="goBack" class="link-body-emphasis fw-semibold text-decoration-none"
+                   href="../reader/">Читатели</a>
+            </li>
+            <li v-else class="breadcrumb-item active" aria-current="page">Читатели</li>
+            <li v-if="isbn" class="breadcrumb-item active" aria-current="page">
+                {{isbn}}
+            </li>
+        </ol>
+    </nav>
+
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addReader"
+            @click="focusToElementFromOpenModal('newReaderFirstNameField')">
+        Добавить
+    </button>
+
+    <div class="modal fade" id="addReader" tabindex="-1" aria-labelledby="addReaderLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addReaderLabel">Добавление читателя</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="newReaderFirstName" class="form-label">Имя</label>
+                        <input type="text" class="form-control" id="newReaderFirstName" v-model="newReaderFirstName"
+                               ref="newReaderFirstNameField" @keyup.enter="focusToElement('newReaderLastNameField')"
+                               @keydown.tab="focusToElement('newReaderLastNameField', $event)"
+                               @focus="selectAllText($event)">
+                        <small class="text-danger" v-if="newReaderFirstNameError">{{ newReaderFirstNameError }}</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newReaderLastName" class="form-label">Фамилия</label>
+                        <input type="text" class="form-control" id="newReaderLastName" v-model="newReaderLastName"
+                               ref="newReaderLastNameField" @keyup.enter="focusToElement('newReaderBirthDateField')"
+                               @keydown.tab="focusToElement('newReaderBirthDateField', $event)"
+                               @focus="selectAllText($event)">
+                        <small class="text-danger" v-if="newReaderLastNameError">{{ newReaderLastNameError }}</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newReaderBirthDate" class="form-label">Дата рождения (ГГГГ-ММ-ДД)</label>
+                        <input type="text" class="form-control" id="newReaderBirthDate" v-model="newReaderBirthDate"
+                               ref="newReaderBirthDateField" @keyup.enter="focusToElement('newReaderClassField')"
+                               @keydown.tab="focusToElement('newReaderClassField', $event)"
+                               @focus="selectAllText($event)">
+                        <small class="text-danger" v-if="newReaderBirthDateError">{{ newReaderBirthDateError }}</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newReaderClass" class="form-label">Класс</label>
+                        <input type="text" class="form-control" id="newReaderClass" v-model="newReaderClass"
+                               ref="newReaderClassField" @keyup.enter="focusToElement('newReaderClassLetterField')"
+                               @keydown.tab="focusToElement('newReaderClassLetterField', $event)"
+                               @focus="selectAllText($event)">
+                        <small class="text-danger" v-if="newReaderClassError">{{ newReaderClassError }}</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newReaderClassLetter" class="form-label">Буква класса</label>
+                        <input type="text" class="form-control" id="newReaderClassLetter" v-model="newReaderClassLetter"
+                               ref="newReaderClassLetterField" @keyup.enter="addReader" @keydown.tab="addReaderButton"
+                               @focus="selectAllText($event)">
+                        <small class="text-danger" v-if="newReaderClassLetterError">{{ newReaderClassLetterError
+                            }}</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="closeReaderModalButton"
+                            data-bs-dismiss="modal">Закрыть
+                    </button>
+                    <button type="button" class="btn btn-primary" id="addReaderButton" ref="addReaderButton"
+                            @click="addReader">Добавить
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <table class="table table-striped">
-      <thead>
+        <thead>
         <tr>
-          <th>Имя</th>
-          <th>Дата рождения</th>
-          <th>Класс</th>
+            <th>Имя</th>
+            <th>Дата рождения</th>
+            <th>Класс</th>
         </tr>
-      </thead>
-      <tbody>
+        </thead>
+        <tbody>
         <tr
-          v-for="reader in readers"
-          :key="reader.id"
-          @click="loadReaderDetails(reader.id)"
-          class="clickable-row"
+                v-for="reader in readers"
+                :key="reader.id"
+                @click="loadReaderDetails(reader.id)"
+                class="clickable-row"
         >
-          <td>{{ reader.first_name }} {{ reader.last_name }}</td>
-          <td>{{ formatDate(reader.birth_date) }} ({{ calculateAge(reader.birth_date) }})</td>
-          <td>{{ reader.clas }} {{ reader.class_letter }}</td>
-          <td></td>
+            <td>{{ reader.first_name }} {{ reader.last_name }}</td>
+            <td>{{ formatDate(reader.birth_date) }} ({{ calculateAge(reader.birth_date) }})</td>
+            <td>{{ reader.clas }} {{ reader.class_letter }}</td>
+            <td></td>
         </tr>
-      </tbody>
+        </tbody>
     </table>
 </div>
 {% endverbatim %}
 {% load static %}
-<script src="{% static 'reader.js' %}"></script>
+<script type="module" src="{% static 'reader.js' %}"></script>
 {% endblock %}
