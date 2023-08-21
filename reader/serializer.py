@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from reader.models import Reader
+from reader.models import Reader, BorrowedBook
 
 
 class ReaderSerializer(serializers.ModelSerializer):
@@ -17,3 +17,26 @@ class ReaderSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
+
+
+class ReadersListSerializer(serializers.ModelSerializer):
+    data = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Reader
+        fields = ('id', 'data')
+
+    def get_data(self, obj):
+        return {
+            "first_name": obj.first_name,
+            "last_name": obj.last_name,
+            "birth_date": obj.birth_date,
+            "clas": obj.clas,
+            "class_letter": obj.class_letter,
+        }
+
+
+class ReaderBorrowedBooksSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BorrowedBook
+        fields = ('id', 'reader', 'textbook')

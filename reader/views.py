@@ -1,20 +1,23 @@
+import csv
 import re
 from datetime import datetime
 
 from django.db import IntegrityError
 from django.shortcuts import render
-from rest_framework import status
+from rest_framework import status, generics
+from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
-from reader.models import Reader
-from reader.serializer import ReaderSerializer
+from reader.models import Reader, BorrowedBook
+from reader.serializer import ReaderSerializer, ReadersListSerializer, ReaderBorrowedBooksSerializer
 
 
 class ReadersList(ModelViewSet):
     queryset = Reader.objects.all().order_by('last_name', 'first_name')
-    serializer_class = ReaderSerializer
+    serializer_class = ReadersListSerializer
+
 
 class ReaderView(APIView):
     serializer_class = ReaderSerializer
@@ -37,5 +40,45 @@ class ReaderView(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-def index(request):
+
+class ReaderBorrowedBookList(generics.ListAPIView):
+    serializer_class = ReaderBorrowedBooksSerializer
+
+    def get_queryset(self):
+        id = self.kwargs['id']
+        queryset = BorrowedBook.objects.filter(id=id).order_by('date')
+        return queryset
+
+
+class FileUploadView(APIView):
+    parser_classes = (MultiPartParser,)
+
+    def post(self, request, *args, **kwargs):
+        uploaded_file = request.FILES['file']
+        if uploaded_file.name.endswith('.csv'):
+
+            file_path = f'media/{uploaded_file.name}'
+            with open(file_path, 'wb') as file:
+                for chunk in uploaded_file.chunks():
+                    file.write(chunk)
+
+
+            data = []
+            try:
+                with open(file_path, 'r', encoding='utf-8', newline='') as csvfile:
+                    reader = csv.reader(csvfile)
+                    next(reader)
+                    for _ in range(2):
+                        row = next(reader, [])
+                        data.append(row)
+            except StopIteration:
+                pass
+
+
+            return Response({'data': data, 'message': 'File uploaded and processed'}, status=201)
+        else:
+            return Response({'message': 'Invalid file format. Only CSV files are allowed.'}, status=400)
+
+
+def index(request, id=None):
     return render(request, 'reader/reader.html')

@@ -10,9 +10,9 @@ new Vue({
         moduleKeyName: 'id', // имя ключа в данных по которому осуществляется загрузка дитальных данных элемента
         detailData: [], // сюда помещаются данные из списка относящиеся к конкретному элементу
         namesOfField: { // ключи и имена полей списка, ключи соответсвуют ключам данных из API
-            first_name: "Имя",
             last_name: "Фамилия",
-            birth_date: "Дата рождения (ДД-ММ-ГГГГ)",
+            first_name: "Имя",
+            birth_date: "Дата рождения (ДД.ММ.ГГГГ)",
             clas: "Класс",
             class_letter: "Буква класса",
         },
@@ -20,13 +20,19 @@ new Vue({
         errors: {}, // объект хранит коды ошибок для полей при  добавляения элемента в список, инициализируется при запуске
         editingIndex: null, // переменная для хранения текущего элемента для редактирования в детальной информации
         editedValue: "", // переменная для хранения новой информации для редактирования в детальном списке
+
+        file: null,
+        uploadProgress: 0,
+        filecomplite: false,
+        csvdata: [],
     },
     methods: {
         ...commonMethods.methods,
 
         loadModuleDetails(id) {
             this.detailId = id;
-            this.detailData = this.moduleData.find(item => item[this.moduleKeyName] === id).data;
+            this.detailData = this.moduleData.find(item => parseInt(item[this.moduleKeyName]) === parseInt(id)).data;
+
 
             // Добавляем новый URL в историю браузера
             window.history.pushState({}, "", `/${this.moduleName}/${id}`);
@@ -52,11 +58,45 @@ new Vue({
                     console.error('Error fetching books:', error);
                 });
         },
+        importCsv() {
+            console.log('import')
+        },
+        handleFileUpload(event) {
+            this.file = event.target.files[0];
+            this.uploadFile()
+        },
+        uploadFile() {
+            if (!this.file) return;
+
+            const formData = new FormData();
+            formData.append('file', this.file);
+            axios.post('/api/upload/', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+                onUploadProgress: progressEvent => {
+                    this.uploadProgress = Math.round(
+                        (progressEvent.loaded * 100) / progressEvent.total
+                    );
+                },
+            }).then(response => {
+                if (response.status === 201) {
+                    this.filecomplite = true
+                    this.csvdata = response.data.data
+                } else {
+                    console.log('Unexpected response status:', response.status);
+                    console.log('Response data:', response.data);
+                }
+            }).catch(error => {
+                console.error('An error occurred:', error);
+            });
+
+        },
     },
     created() {
         this.initFields()
         this.fetchModuleData().then(() => {
-            // Получаем путь URL и извлекаем ISBN из него при создании компонента
+
             const path = window.location.pathname;
             const pathSegments = path.split('/');
             const idIndex = pathSegments.indexOf(this.moduleName) + 1;
@@ -64,7 +104,7 @@ new Vue({
             if (idIndex > 0 && idIndex < pathSegments.length) {
                 this.detailId = pathSegments[idIndex];
                 if (this.detailId) {
-                    this.loadModuleDetails(this.detailId); // Вызываем метод для загрузки деталей учебника по ISBN
+                    this.loadModuleDetails(this.detailId);
                 }
             }
         });

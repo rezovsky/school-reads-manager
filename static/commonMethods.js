@@ -22,7 +22,6 @@ export default {
             }
         },
         focusToElementFromOpenModal(targetElement) {
-            console.log(targetElement)
             setTimeout(() => {
                 this.$refs[targetElement][0].focus();
             }, 500);
@@ -116,7 +115,7 @@ export default {
         },
         formatDate(date) {
             const parts = date.split('-');
-            return `${parts[2]}-${parts[1]}-${parts[0]}`;
+            return `${parts[2]}.${parts[1]}.${parts[0]}`;
         }, // Функция вычисления возраста
         calculateAge(birthDate) {
             const today = new Date();
