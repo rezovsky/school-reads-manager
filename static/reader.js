@@ -25,6 +25,7 @@ new Vue({
         uploadProgress: 0,
         filecomplite: false,
         csvdata: [],
+        csvCount: 0,
     },
     methods: {
         ...commonMethods.methods,
@@ -59,6 +60,7 @@ new Vue({
                 });
         },
         importCsv() {
+            this.fetchModuleData()
             console.log('import')
         },
         handleFileUpload(event) {
@@ -83,6 +85,7 @@ new Vue({
                 if (response.status === 201) {
                     this.filecomplite = true
                     this.csvdata = response.data.data
+                    this.csvCount = response.data.count
                 } else {
                     console.log('Unexpected response status:', response.status);
                     console.log('Response data:', response.data);
@@ -91,6 +94,10 @@ new Vue({
                 console.error('An error occurred:', error);
             });
 
+        },
+        resetMdal() {
+            this.uploadProgress = 0
+            this.filecomplite = false
         },
     },
     created() {
@@ -108,6 +115,7 @@ new Vue({
                 }
             }
         });
+
     },
     computed: {},
 });

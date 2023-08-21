@@ -68,17 +68,19 @@
             Импорт из CSV
         </button>
 
-        <div class="modal fade" id="importCsv" tabindex="-1" aria-labelledby="addReaderLabel" aria-hidden="true">
+        <div class="modal fade" ref="importCsv" id="importCsv" tabindex="-1" aria-labelledby="addReaderLabel"
+             aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="importCsvLabel">Импорт из файла</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                                @click="resetMdal"></button>
                     </div>
 
                     <div class="modal-body">
                         <div v-if="!filecomplite">
-                            <h3>Пример CSV файла:</h3>
+                            <h4>Пример CSV файла:</h4>
                             <table class="table table-bordered">
                                 <thead>
                                 <tr>
@@ -100,13 +102,13 @@
                                 </tbody>
                             </table>
 
-                            <h3>Выберите ваш файл:</h3>
+                            <h4>Выберите ваш файл:</h4>
                             <input type="file" accept=".csv" @change="handleFileUpload">
                             <progress :value="uploadProgress" max="100"></progress>
                         </div>
 
                         <div v-if="filecomplite">
-                            <h3>Проверьте правильность разметки данных:</h3>
+                            <h4>Проверьте правильность разметки данных (всего строк: {{csvCount}}):</h4>
                             <table class="table table-bordered">
                                 <tbody>
                                 <thead>
@@ -127,15 +129,20 @@
                                 </tr>
                                 </tbody>
                             </table>
+                            <h4>Если все верно - нажмите "Импорт":</h4>
                         </div>
 
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary"
-                                    data-bs-dismiss="modal">
+                                    data-bs-dismiss="modal" @click="resetMdal">
                                 Закрыть
                             </button>
+                            <button type="button" class="btn btn-secondary"
+                                    @click="resetMdal" v-if="filecomplite">Перезагрузить
+                            </button>
                             <button type="button" class="btn btn-primary" id="importButton" ref="importButton"
-                                    @click="importCsv">Импорт
+                                    data-bs-dismiss="modal"
+                                    @click="importCsv" v-if="filecomplite">Импорт
                             </button>
                         </div>
                     </div>

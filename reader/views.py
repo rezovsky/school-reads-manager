@@ -57,25 +57,21 @@ class FileUploadView(APIView):
         uploaded_file = request.FILES['file']
         if uploaded_file.name.endswith('.csv'):
 
-            file_path = f'media/{uploaded_file.name}'
+            file_path = f'media/import.csv'
             with open(file_path, 'wb') as file:
                 for chunk in uploaded_file.chunks():
                     file.write(chunk)
 
 
             data = []
-            try:
-                with open(file_path, 'r', encoding='utf-8', newline='') as csvfile:
-                    reader = csv.reader(csvfile)
-                    next(reader)
-                    for _ in range(2):
-                        row = next(reader, [])
-                        data.append(row)
-            except StopIteration:
-                pass
+            with open(file_path, 'r', encoding='utf-8', newline='') as csvfile:
+                reader = csv.reader(csvfile)
+                next(reader)
+                for row in reader:
+                    data.append(row)
 
 
-            return Response({'data': data, 'message': 'File uploaded and processed'}, status=201)
+            return Response({'data': data[:3], "count": len(data) - 1, 'message': 'File uploaded and processed'}, status=201)
         else:
             return Response({'message': 'Invalid file format. Only CSV files are allowed.'}, status=400)
 
