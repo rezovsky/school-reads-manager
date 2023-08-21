@@ -77,7 +77,7 @@
                 @click="loadModuleDetails(reader.id)"
                 class="clickable-row"
         >
-            <td>{{ reader.first_name }} {{ reader.last_name }}</td>
+            <td>{{ reader.last_name }} {{ reader.first_name }}</td>
             <td>{{ formatDate(reader.birth_date) }} ({{ calculateAge(reader.birth_date) }})</td>
             <td>{{ reader.clas }} {{ reader.class_letter }}</td>
             <td></td>

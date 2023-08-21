@@ -5,12 +5,12 @@ from django.urls import path, include
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from rest_framework.routers import SimpleRouter
 
-from reader.views import ReadersList
+from reader.views import ReadersList, ReaderView
 from textbook.views import TextBookView, TextBookInventList, InventView, TextBooksList
 
 router = SimpleRouter()
 router.register('api/textbookslist', TextBooksList, basename='textbookslist')
-router.register('api/readerslist', ReadersList, basename='readersslist')
+router.register('api/readerslist', ReadersList, basename='readerslist')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,7 +25,7 @@ urlpatterns = [
     path('api/textbooks/<str:isbn>/', TextBookView.as_view(), name='textbook-detail'),
     path('api/invent/', InventView.as_view(), name='textbook-invent-add'),
 
-
+    path('api/readers/', ReaderView.as_view(), name='reader-add'),
 ]
 
 urlpatterns += router.urls
