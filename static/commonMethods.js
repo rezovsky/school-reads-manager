@@ -22,6 +22,7 @@ export default {
             }
         },
         focusToElementFromOpenModal(targetElement) {
+            console.log(targetElement)
             setTimeout(() => {
                 this.$refs[targetElement][0].focus();
             }, 500);
@@ -70,6 +71,78 @@ export default {
                     this.moduleData = response.data;
                 });
         },
-
+        // Метод для возврата к списку учебников
+        goBack(event = null) {
+            if (event) {
+                event.preventDefault();
+            }
+            history.pushState({}, null, `/${this.moduleName}/`);
+            this.detailId = '';
+            this.moduleDetail = [];
+            this.fetchModuleData()
+        },
+        addItem() {
+            axios.post(`/api/${this.moduleName}s/`, this.newItems)
+                .then(response => {
+                    this.fetchModuleData().then(() => {
+                        this.clearModalFields();
+                        this.closeModal()
+                        this.loadModuleDetails(response.data[this.moduleKeyName])
+                    })
+                })
+                .catch(error => {
+                    this.handleErrors(error)
+                });
+        },
+        toggleEditing(index) {
+            this.editingIndex = index;
+            this.editedValue = this.detailData[index];
+            setTimeout(() => {
+                this.$refs['editing' + index][0].focus();
+            }, 100);
+        },
+        saveItem(index) {
+            const data = {};
+            data[index] = this.editedValue;
+            axios.put(`/api/${this.moduleName}s/${this.detailId}/`, data)
+                .then(response => {
+                    this.detailData[index] = this.editedValue;
+                    this.editingIndex = null;
+                })
+                .catch(error => {
+                    // Обработка ошибки
+                    console.error('Error adding inventory:', error);
+                });
+        },
+        formatDate(date) {
+            const parts = date.split('-');
+            return `${parts[2]}-${parts[1]}-${parts[0]}`;
+        }, // Функция вычисления возраста
+        calculateAge(birthDate) {
+            const today = new Date();
+            const birthDateObj = new Date(birthDate);
+            let age = today.getFullYear() - birthDateObj.getFullYear();
+            const monthDiff = today.getMonth() - birthDateObj.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDateObj.getDate())) {
+                age--;
+            }
+            return this.ageWithDeclension(age);
+        }, // Функция склонения подписи к возрасту
+        ageWithDeclension(age) {
+            if (age >= 11 && age <= 14) {
+                return `${age} лет`;
+            }
+            const lastDigit = age % 10;
+            if (lastDigit === 1) {
+                return `${age} год`;
+            } else if (lastDigit >= 2 && lastDigit <= 4) {
+                return `${age} года`;
+            } else {
+                return `${age} лет`;
+            }
+        },
+        getFirstField(){
+            return Object.keys(this.namesOfField)[0] + 'Field'
+        }
     }
 };

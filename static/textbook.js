@@ -3,17 +3,13 @@ import commonMethods from './commonMethods.js';
 new Vue({
     el: '#app',
     data: {
-        moduleName: 'textbook',
-        moduleData: [], // Массив для списка учебников
-        textbookDetail: [], // Массив для деталей учебника
-        isbn: '', // ISBN текущего учебника
-        bookdata: [],
-        inventCount: 1,
-        inventNumber: 0,
-        addingInventory: false,
-        yearOptions: [],
-        selectedYear: [],
-        namesOfField: {
+        moduleName: 'textbook', // название моделя, используется в запросах к API
+        moduleData: [], // переменная для хранения списка полученного из API
+        moduleDetail: [], // переменная для хранения данных о конкретном элементе списка
+        detailId: '', // хранит id элемента списка по которому открываются детальные данные
+        moduleKeyName: 'isbn', // имя ключа в данных по которому осуществляется загрузка дитальных данных элемента
+        detailData: [], // сюда помещаются данные из списка относящиеся к конкретному элементу
+        namesOfField: { // ключи и имена полей списка, ключи соответсвуют ключам данных из API
             isbn: "ISBN",
             title: "Название",
             autor: "Автор",
@@ -22,23 +18,26 @@ new Vue({
             iteration: "Издание",
             publisher: "Издатель",
         },
-        newItems: {},
-        errors: {},
-        editingIndex: null,
-        editedValue: "",
+        newItems: {}, // объект хранит значения для добавляения элемента в список, инициализируется при запуске
+        errors: {}, // объект хранит коды ошибок для полей при  добавляения элемента в список, инициализируется при запуске
+        editingIndex: null, // переменная для хранения текущего элемента для редактирования в детальной информации
+        editedValue: "", // переменная для хранения новой информации для редактирования в детальном списке
 
+        inventCount: 1, // дефолтное значение счетчика для добавления инвентарных номеров
+        inventNumber: 0, // дефолтное значение инвентарного номера
+        addingInventory: false, // переменная блокировки ввода при добавлении инвентарных номеров до завершения операции
     },
     methods: {
         ...commonMethods.methods,
 
         // Метод для загрузки деталей учебника по ISBN
-        loadTextbookDetails(isbn) {
-            this.isbn = isbn; // Устанавливаем текущий ISBN
-            this.bookdata = this.moduleData.find(textbook => textbook.isbn === isbn).data;
+        loadModuleDetails(id) {
+            this.detailId = id; // Устанавливаем текущий ISBN
+            this.detailData = this.moduleData.find(item => item[this.moduleKeyName] === id).data;
 
             // Добавляем новый URL в историю браузера
-            window.history.pushState({}, "", "/textbook/" + isbn);
-            this.textbookDetail = []; // Очищаем массив с деталями учебника
+            window.history.pushState({}, "", `/${this.moduleName}/${id}`);
+            this.moduleDetail = []; // Очищаем массив с деталями учебника
 
             // Добавляем обработчик для события перехода назад в истории браузера
             window.addEventListener("popstate", (event) => {
@@ -46,12 +45,12 @@ new Vue({
             });
 
             // Загружаем детали учебника с помощью API запроса
-            axios.get(`/api/${this.moduleName}/` + isbn)
+            axios.get(`/api/${this.moduleName}/${id}`)
                 .then(response => {
-                    this.textbookDetail = response.data; // Заполняем массив textbookDetail данными из API
+                    this.moduleDetail = response.data;
 
-                    if (this.textbookDetail.length > 0) {
-                        this.inventNumber = this.textbookDetail[0].inv.split('.')[0];
+                    if (this.moduleDetail.length > 0) {
+                        this.inventNumber = this.moduleDetail[0].inv.split('.')[0];
                     } else {
                         this.inventNumber = 0;
                     }
@@ -60,61 +59,13 @@ new Vue({
                     console.error('Error fetching books:', error);
                 });
         },
-        // Метод для возврата к списку учебников
-        goBack(event = null) {
-            if (event) {
-                event.preventDefault();
-            }
-            history.pushState({}, null, `/${this.moduleName}/`);
-            this.isbn = ''; //
-            this.textbookDetail = [];
-            this.fetchModuleData()
-        },
-
-
-        addItem() {
-            axios.post('/api/textbooks/', this.newItems)
-                .then(response => {
-                    this.fetchModuleData().then(() => {
-                        this.clearModalFields();
-                        this.closeModal()
-                        this.loadTextbookDetails(response.data.isbn)
-                    })
-                })
-                .catch(error => {
-                    this.handleErrors(error)
-                });
-        },
-
-
-        toggleEditing(index) {
-            this.editingIndex = index;
-            this.editedValue = this.bookdata[index];
-            setTimeout(() => {
-                this.$refs['editing' + index][0].focus();
-            }, 100);
-        },
-        saveItem(index) {
-            const data = {};
-            data[index] = this.editedValue;
-            axios.put('/api/textbooks/' + this.isbn + '/', data)
-                .then(response => {
-                    this.bookdata[index] = this.editedValue;
-                    this.editingIndex = null;
-                })
-                .catch(error => {
-                    // Обработка ошибки
-                    console.error('Error adding inventory:', error);
-                });
-        },
         apiInvent(action, inv = null) {
-
             if (action === 'add') {
                 this.addingInventory = true; // Блокируем элементы ввода
                 // Выполнение запроса к API
-                axios.post('/api/invent/', {isbn: this.isbn, inv: this.inventNumber, inv_count: this.inventCount})
+                axios.post('/api/invent/', {isbn: this.detailId, inv: this.inventNumber, inv_count: this.inventCount})
                     .then(response => {
-                        this.textbookDetail = response.data.invs;
+                        this.moduleDetail = response.data.invs;
 
                         // После выполнения запроса, разблокируем элементы ввода
                         this.addingInventory = false;
@@ -131,13 +82,13 @@ new Vue({
                 // Выполнение запроса к API
                 axios.delete('/api/invent/', {
                     data: {
-                        isbn: this.isbn,
+                        isbn: this.detailId,
                         inv: inv
                     }
                 }).then(response => {
                     if (response.status === 204) {
                         // Удаление записи из this.textbookDetail по inv
-                        this.textbookDetail = this.textbookDetail.filter(item => item.inv !== inv);
+                        this.moduleDetail = this.moduleDetail.filter(item => item.inv !== inv);
 
                         console.log('Record deleted successfully');
                     } else {
@@ -161,22 +112,18 @@ new Vue({
     created() {
         this.initFields()
         this.fetchModuleData().then(() => {
-                // Получаем путь URL и извлекаем ISBN из него при создании компонента
-                const path = window.location.pathname;
-                const pathSegments = path.split('/');
-                const isbnIndex = pathSegments.indexOf(this.moduleName) + 1;
+            // Получаем путь URL и извлекаем ISBN из него при создании компонента
+            const path = window.location.pathname;
+            const pathSegments = path.split('/');
+            const idIndex = pathSegments.indexOf(this.moduleName) + 1;
 
-                if (isbnIndex > 0 && isbnIndex < pathSegments.length) {
-                    this.isbn = pathSegments[isbnIndex];
-                    if (this.isbn) {
-                        this.loadTextbookDetails(this.isbn); // Вызываем метод для загрузки деталей учебника по ISBN
-                    }
+            if (idIndex > 0 && idIndex < pathSegments.length) {
+                this.detailId = pathSegments[idIndex];
+                if (this.detailId) {
+                    this.loadModuleDetails(this.detailId); // Вызываем метод для загрузки деталей учебника по ISBN
                 }
-            });
-        const currentYear = new Date().getFullYear();
-        for (let i = currentYear; i >= currentYear - 15; i--) {
-            this.yearOptions.push(i);
-        }
+            }
+        });
     },
     computed: {},
 });

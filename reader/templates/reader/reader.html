@@ -11,19 +11,19 @@
             <li class="breadcrumb-item">
                 <a class="link-body-emphasis fw-semibold text-decoration-none" href="../">Домой</a>
             </li>
-            <li v-if="isbn" class="breadcrumb-item">
+            <li v-if="detailId" class="breadcrumb-item">
                 <a @click.prevent="goBack" class="link-body-emphasis fw-semibold text-decoration-none"
                    href="../reader/">Читатели</a>
             </li>
             <li v-else class="breadcrumb-item active" aria-current="page">Читатели</li>
-            <li v-if="isbn" class="breadcrumb-item active" aria-current="page">
-                {{isbn}}
+            <li v-if="detailId" class="breadcrumb-item active" aria-current="page">
+                {{detailId}}
             </li>
         </ol>
     </nav>
 
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addReader"
-            @click="focusToElementFromOpenModal('newReaderFirstNameField')">
+            @click="focusToElementFromOpenModal(getFirstField())">
         Добавить
     </button>
 
@@ -34,55 +34,29 @@
                     <h5 class="modal-title" id="addReaderLabel">Добавление читателя</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="newReaderFirstName" class="form-label">Имя</label>
-                        <input type="text" class="form-control" id="newReaderFirstName" v-model="newReaderFirstName"
-                               ref="newReaderFirstNameField" @keyup.enter="focusToElement('newReaderLastNameField')"
-                               @keydown.tab="focusToElement('newReaderLastNameField', $event)"
+                    <div v-for="(label, key, index) in namesOfField" :key="key" class="mb-3">
+                        <label :for="`newReader${key.charAt(0).toUpperCase()}${key.slice(1)}`" class="form-label">{{
+                            label }}</label>
+                        <input type="text" class="form-control"
+                               :id="`newReader${key.charAt(0).toUpperCase()}${key.slice(1)}`"
+                               v-model="newItems[key]"
+                               :ref="`${key}Field`"
+                               @keydown="handleKeyDown(index, key, $event)"
                                @focus="selectAllText($event)">
-                        <small class="text-danger" v-if="newReaderFirstNameError">{{ newReaderFirstNameError }}</small>
+                        <div class="text-danger" v-if="errors[key]" :id="`${key}Error`">{{ errors[key] }}</div>
                     </div>
-                    <div class="mb-3">
-                        <label for="newReaderLastName" class="form-label">Фамилия</label>
-                        <input type="text" class="form-control" id="newReaderLastName" v-model="newReaderLastName"
-                               ref="newReaderLastNameField" @keyup.enter="focusToElement('newReaderBirthDateField')"
-                               @keydown.tab="focusToElement('newReaderBirthDateField', $event)"
-                               @focus="selectAllText($event)">
-                        <small class="text-danger" v-if="newReaderLastNameError">{{ newReaderLastNameError }}</small>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" id="closeModalButton"
+                                data-bs-dismiss="modal">
+                            Закрыть
+                        </button>
+                        <button type="button" class="btn btn-primary" id="addButton" ref="addButton"
+                                @click="addItem">Добавить
+                        </button>
                     </div>
-                    <div class="mb-3">
-                        <label for="newReaderBirthDate" class="form-label">Дата рождения (ГГГГ-ММ-ДД)</label>
-                        <input type="text" class="form-control" id="newReaderBirthDate" v-model="newReaderBirthDate"
-                               ref="newReaderBirthDateField" @keyup.enter="focusToElement('newReaderClassField')"
-                               @keydown.tab="focusToElement('newReaderClassField', $event)"
-                               @focus="selectAllText($event)">
-                        <small class="text-danger" v-if="newReaderBirthDateError">{{ newReaderBirthDateError }}</small>
-                    </div>
-                    <div class="mb-3">
-                        <label for="newReaderClass" class="form-label">Класс</label>
-                        <input type="text" class="form-control" id="newReaderClass" v-model="newReaderClass"
-                               ref="newReaderClassField" @keyup.enter="focusToElement('newReaderClassLetterField')"
-                               @keydown.tab="focusToElement('newReaderClassLetterField', $event)"
-                               @focus="selectAllText($event)">
-                        <small class="text-danger" v-if="newReaderClassError">{{ newReaderClassError }}</small>
-                    </div>
-                    <div class="mb-3">
-                        <label for="newReaderClassLetter" class="form-label">Буква класса</label>
-                        <input type="text" class="form-control" id="newReaderClassLetter" v-model="newReaderClassLetter"
-                               ref="newReaderClassLetterField" @keyup.enter="addReader" @keydown.tab="addReaderButton"
-                               @focus="selectAllText($event)">
-                        <small class="text-danger" v-if="newReaderClassLetterError">{{ newReaderClassLetterError
-                            }}</small>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="closeReaderModalButton"
-                            data-bs-dismiss="modal">Закрыть
-                    </button>
-                    <button type="button" class="btn btn-primary" id="addReaderButton" ref="addReaderButton"
-                            @click="addReader">Добавить
-                    </button>
                 </div>
             </div>
         </div>
@@ -98,9 +72,9 @@
         </thead>
         <tbody>
         <tr
-                v-for="reader in readers"
+                v-for="reader in moduleData"
                 :key="reader.id"
-                @click="loadReaderDetails(reader.id)"
+                @click="loadModuleDetails(reader.id)"
                 class="clickable-row"
         >
             <td>{{ reader.first_name }} {{ reader.last_name }}</td>
