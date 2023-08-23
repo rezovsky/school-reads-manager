@@ -167,7 +167,9 @@
                         v-for="reader in moduleData"
                         :key="reader.id"
                         @click="loadModuleDetails(reader.id)"
-                        class="clickable-row"
+                        class="clickable-row"++
+                        5+5
+
                 >
                     <td>{{ reader.data.last_name }} {{ reader.data.first_name }}</td>
                     <td>{{ formatDate(reader.data.birth_date) }} ({{ calculateAge(reader.data.birth_date) }})</td>
