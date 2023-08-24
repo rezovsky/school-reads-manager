@@ -14,7 +14,7 @@
         <div class="print-6">{{ school }}</div>
         <div class="print-9">{{ textbook.title }}</div>
         <div class="print-9">{{ textbook.clas }} класс</div>
-        <img src="{{ media_root }}qrcode/{{ isbn }}/{{ i.inv }}-{{ i.nbook }}.png">
+        <img src="{{ media_root }}{{ i.url }}">
         <div class="print-9">{{ i.inv }}.{{ i.nbook }}</div>
     </section>
 {% endfor %}

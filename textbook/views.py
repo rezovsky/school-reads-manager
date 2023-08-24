@@ -9,7 +9,6 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from .models import TextBook, TextBookInvent, TextBookArhiv
-import qrcode
 from .serializer import TextBookSerializer, TextBookInventSerializer, InventSerializer, TextBookListSerializer
 
 
@@ -91,32 +90,6 @@ class InventView(APIView):
                 inventiveness = TextBookInvent(inv=new_inv, isbn=textbook)
                 inventiveness.save()
 
-                qr = qrcode.QRCode(
-                    version=1,
-                    error_correction=qrcode.constants.ERROR_CORRECT_L,
-                    box_size=10,
-                    border=1,
-                )
-                qr_data = '888.' + new_inv
-                qr.add_data(qr_data.replace('.', '-'))
-                qr.make(fit=True)
-
-                img = qr.make_image(fill_color="black", back_color="white")
-
-                media_path = os.path.join(os.getcwd(), 'media')
-                if not os.path.isdir(media_path):
-                    os.mkdir(media_path)
-
-                qrcode_path = os.path.join(media_path, 'qrcode')
-                if not os.path.isdir(qrcode_path):
-                    os.mkdir(qrcode_path)
-
-                path = os.path.join(qrcode_path, str(isbn))
-                if not os.path.isdir(path):
-                    os.mkdir(path)
-
-                filename = os.path.join(path, new_inv.replace('.', '-') + ".png")
-                img.save(filename)
             invs = TextBookInvent.objects.filter(isbn=isbn).order_by('inv')
             serialize_invent_data = [{'inv': inv.inv, 'isbn': inv.isbn.isbn, 'date': inv.date} for inv in invs]
             return Response({'message': 'Запись успешно создана', 'invs': serialize_invent_data},
