@@ -26,13 +26,16 @@ new Vue({
         filecomplite: false,
         csvdata: [],
         csvCount: 0,
+        filekey: '',
+        selectedGroup: null,
+        filteredRowCount: 0
     },
     methods: {
         ...commonMethods.methods,
 
         loadModuleDetails(id) {
             this.detailId = id;
-            this.detailData = this.moduleData.find(item => parseInt(item[this.moduleKeyName]) === parseInt(id)).data;
+            this.detailData = this.moduleData.readers.find(item => parseInt(item[this.moduleKeyName]) === parseInt(id)).data;
 
 
             // Добавляем новый URL в историю браузера
@@ -60,10 +63,11 @@ new Vue({
                 });
         },
         importCsv() {
-            console.log('import')
-            this.resetModal()
-            this.fetchModuleData()
-
+            axios.get(`/api/upload/?key=${this.filekey}`).then(
+                response => {
+                    this.resetModal()
+                    this.fetchModuleData()
+                })
         },
         handleFileUpload(event) {
             this.file = event.target.files[0];
@@ -88,6 +92,7 @@ new Vue({
                     this.filecomplite = true
                     this.csvdata = response.data.data
                     this.csvCount = response.data.count
+                    this.filekey = response.data.key
                 } else {
                     console.log('Unexpected response status:', response.status);
                     console.log('Response data:', response.data);
@@ -101,6 +106,10 @@ new Vue({
             this.uploadProgress = 0
             this.filecomplite = false
         },
+        updateSelectedGroup(group) {
+            this.selectedGroup = group;
+            this.filteredRowCount = this.moduleData.readers.filter(reader => (reader.data.clas + ' ' + reader.data.class_letter).includes(group)).length;
+        }
     },
     created() {
         this.initFields()

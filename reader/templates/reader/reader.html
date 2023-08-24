@@ -154,6 +154,19 @@
 
 
         <div v-if="!detailId">
+
+            <div class="flex pt-2 border border-primary-subtle mt-2" role="group" aria-label="Button group">
+                <button v-for="group in moduleData.groups" type="button" class="btn btn-primary mx-2 mb-2"
+                        @click="updateSelectedGroup(group)">{{ group }}
+                </button>
+                <button v-if="selectedGroup" type="button" class="btn btn-primary mx-2 mb-2"
+                        @click="updateSelectedGroup('')">Сбросить фильтр
+                </button>
+
+            </div>
+
+            <h4 v-if="selectedGroup">Количество учеников в классе: {{ filteredRowCount }}</h4>
+
             <table class="table table-striped">
                 <thead>
                 <tr>
@@ -164,10 +177,12 @@
                 </thead>
                 <tbody>
                 <tr
-                        v-for="reader in moduleData"
+                        v-for="reader in moduleData.readers"
                         :key="reader.id"
                         @click="loadModuleDetails(reader.id)"
                         class="clickable-row"
+                        v-show="selectedGroup ? (reader.data.clas + ' ' + reader.data.class_letter).includes(selectedGroup) : true"
+
                 >
                     <td>{{ reader.data.last_name }} {{ reader.data.first_name }}</td>
                     <td>{{ formatDate(reader.data.birth_date) }} ({{ calculateAge(reader.data.birth_date) }})</td>
