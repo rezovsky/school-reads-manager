@@ -1,4 +1,5 @@
 import csv
+import os
 import re
 from datetime import datetime
 
@@ -57,11 +58,15 @@ class FileUploadView(APIView):
         uploaded_file = request.FILES['file']
         if uploaded_file.name.endswith('.csv'):
 
-            file_path = f'media/import.csv'
+            media_path = os.path.join(os.getcwd(), 'media')
+            if not os.path.isdir(media_path):
+                os.mkdir(media_path)
+
+            file_path = os.path.join(media_path, 'import.csv')
+
             with open(file_path, 'wb') as file:
                 for chunk in uploaded_file.chunks():
                     file.write(chunk)
-
 
             data = []
             with open(file_path, 'r', encoding='utf-8', newline='') as csvfile:
@@ -70,8 +75,8 @@ class FileUploadView(APIView):
                 for row in reader:
                     data.append(row)
 
-
-            return Response({'data': data[:3], "count": len(data) - 1, 'message': 'File uploaded and processed'}, status=201)
+            return Response({'data': data[:3], "count": len(data) - 1, 'message': 'File uploaded and processed'},
+                            status=201)
         else:
             return Response({'message': 'Invalid file format. Only CSV files are allowed.'}, status=400)
 

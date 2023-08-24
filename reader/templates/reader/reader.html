@@ -75,7 +75,7 @@
                     <div class="modal-header">
                         <h5 class="modal-title" id="importCsvLabel">Импорт из файла</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-                                @click="resetMdal"></button>
+                                @click="resetModal"></button>
                     </div>
 
                     <div class="modal-body">
@@ -136,11 +136,11 @@
 
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary"
-                                    data-bs-dismiss="modal" @click="resetMdal">
+                                    data-bs-dismiss="modal" @click="resetModal">
                                 Закрыть
                             </button>
                             <button type="button" class="btn btn-secondary"
-                                    @click="resetMdal" v-if="filecomplite">Перезагрузить
+                                    @click="resetModal" v-if="filecomplite">Перезагрузить
                             </button>
                             <button type="button" class="btn btn-primary" id="importButton" ref="importButton"
                                     data-bs-dismiss="modal"

@@ -60,8 +60,10 @@ new Vue({
                 });
         },
         importCsv() {
-            this.fetchModuleData()
             console.log('import')
+            this.resetModal()
+            this.fetchModuleData()
+
         },
         handleFileUpload(event) {
             this.file = event.target.files[0];
@@ -95,7 +97,7 @@ new Vue({
             });
 
         },
-        resetMdal() {
+        resetModal() {
             this.uploadProgress = 0
             this.filecomplite = false
         },
