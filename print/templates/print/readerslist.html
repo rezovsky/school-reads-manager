@@ -7,6 +7,11 @@
     <link rel="stylesheet" href="{% static 'printa4.css' %}">
 </head>
 <body>
+<div class="header">
+    <h3>Класс {{ clas }} {{ letter }}</h3>
+    <img src="{{ media_root }}{{ goback }}" class="right-image">
+</div>
+
 <table>
     <thead>
     <tr>
@@ -22,7 +27,7 @@
     <tr>
         <td>{{ reader.first_name }}</td>
         <td>{{ reader.last_name }}</td>
-        <td><img src="{{ media_root }}{{ reader.url }}" alt="Штрих-код"></td>
+        <td><img src="{{ media_root }}{{ reader.url }}"></td>
         <td colspan="3"></td>
     </tr>
     {% endfor %}

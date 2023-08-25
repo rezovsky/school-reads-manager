@@ -58,6 +58,7 @@ def readerslist(request, clas, letter):
             'letter': letter,
             'readers': readers_array,
             'media_root': media_root(request),
+            'goback': barcode_generate('000', '000')
         }
     return render(request, 'print/readerslist.html', data)
 

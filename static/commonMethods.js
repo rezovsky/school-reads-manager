@@ -70,6 +70,10 @@ export default {
                     this.moduleData = response.data;
                 });
         },
+        preFetchModuleData() {
+            this.fetchModuleData();
+            return true;
+        },
         // Метод для возврата к списку учебников
         goBack(event = null) {
             if (event) {
@@ -168,7 +172,14 @@ export default {
                     }
                     break;
                 case '777':
-                    console.log('Поиски ученика');
+                    if (this.moduleName === "reader") {
+                        const parts = this.searchText.split('-');
+                        const id = parts[1]
+                        const foundModule = this.moduleData.readers.find(item => item.id.toString() === id);
+                        if (foundModule) {
+                            this.loadModuleDetails(id)
+                        }
+                    }
                     break;
             }
             this.searchText = ''
