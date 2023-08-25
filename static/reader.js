@@ -28,7 +28,11 @@ new Vue({
         csvCount: 0,
         filekey: '',
         selectedGroup: null,
-        filteredRowCount: 0
+        filteredRowCount: 0,
+        filterClas: '',
+        filterLater: '',
+
+        searchText: '',
     },
     methods: {
         ...commonMethods.methods,
@@ -108,8 +112,10 @@ new Vue({
         },
         updateSelectedGroup(group) {
             this.selectedGroup = group;
+            this.filterClas = group.split(' ')[0]
+            this.filterLater = group.split(' ')[1]
             this.filteredRowCount = this.moduleData.readers.filter(reader => (reader.data.clas + ' ' + reader.data.class_letter).includes(group)).length;
-        }
+        },
     },
     created() {
         this.initFields()
@@ -127,6 +133,12 @@ new Vue({
             }
         });
 
+    },
+    mounted() {
+        document.body.addEventListener('keydown', this.handleGlobalKeyPress);
+    },
+    beforeDestroy() {
+        document.body.removeEventListener('keydown', this.handleGlobalKeyPress);
     },
     computed: {},
 });

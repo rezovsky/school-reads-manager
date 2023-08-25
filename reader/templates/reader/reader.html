@@ -154,7 +154,6 @@
 
 
         <div v-if="!detailId">
-
             <div class="flex pt-2 border border-primary-subtle mt-2" role="group" aria-label="Button group">
                 <button v-for="group in moduleData.groups" type="button" class="btn btn-primary mx-2 mb-2"
                         @click="updateSelectedGroup(group)">{{ group }}
@@ -162,6 +161,11 @@
                 <button v-if="selectedGroup" type="button" class="btn btn-primary mx-2 mb-2"
                         @click="updateSelectedGroup('')">Сбросить фильтр
                 </button>
+
+                <a v-if="selectedGroup" :href="'/print/readerslist/' + filterClas + '/' + filterLater" target="_blank"
+                   class="btn btn-primary mx-2 mb-2">
+                    Печать ведомости
+                </a>
 
             </div>
 

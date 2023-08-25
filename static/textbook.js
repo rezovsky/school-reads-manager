@@ -26,6 +26,8 @@ new Vue({
         inventCount: 1, // дефолтное значение счетчика для добавления инвентарных номеров
         inventNumber: 0, // дефолтное значение инвентарного номера
         addingInventory: false, // переменная блокировки ввода при добавлении инвентарных номеров до завершения операции
+
+        searchText: '',
     },
     methods: {
         ...commonMethods.methods,
@@ -124,6 +126,12 @@ new Vue({
                 }
             }
         });
+    },
+    mounted() {
+        document.body.addEventListener('keydown', this.handleGlobalKeyPress);
+    },
+    beforeDestroy() {
+        document.body.removeEventListener('keydown', this.handleGlobalKeyPress);
     },
     computed: {},
 });

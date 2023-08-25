@@ -4,6 +4,10 @@ import os
 import qrcode
 from django.shortcuts import render, redirect
 from textbook.models import TextBook, TextBookInvent
+from reader.models import Reader
+
+from barcode import Code39
+from barcode.writer import ImageWriter
 
 
 def single(request, isbn, inv):
@@ -39,6 +43,23 @@ def multi(request, isbn):
         'school': 'МАОУ СОШ 8',
     }
     return render(request, 'print/multi.html', data)
+
+
+def readerslist(request, clas, letter):
+    readers = Reader.objects.filter(clas=clas, class_letter=letter).order_by('last_name', 'first_name')
+    readers_array = []
+    for i in readers:
+        first_name = i.first_name
+        last_name = i.last_name
+        url = barcode_generate('777', i.id)
+        readers_array.append({'first_name': first_name, 'last_name': last_name, 'url': url})
+        data = {
+            'clas': clas,
+            'letter': letter,
+            'readers': readers_array,
+            'media_root': media_root(request),
+        }
+    return render(request, 'print/readerslist.html', data)
 
 
 def media_root(req):
@@ -83,3 +104,28 @@ def qr_generate(isbn, inv):
         img.save(file_path)
 
     return f"qrcode/{isbn_hash}/{inv_hash}.png"
+
+
+def barcode_generate(prefix, id):
+    media_path = os.path.join(os.getcwd(), 'media')
+    if not os.path.isdir(media_path):
+        os.mkdir(media_path)
+
+    qrcode_path = os.path.join(media_path, 'barcode')
+    if not os.path.isdir(qrcode_path):
+        os.mkdir(qrcode_path)
+
+    prefix_hash = hashlib.md5(str(prefix).encode('utf-8')).hexdigest()
+    path = os.path.join(qrcode_path, prefix_hash)
+    if not os.path.isdir(path):
+        os.mkdir(path)
+
+    id_hash = hashlib.md5(str(id).encode('utf-8')).hexdigest()
+    file_path = os.path.join(path, id_hash)
+
+    if not os.path.exists(file_path):
+        data = f"{prefix}-{id}"
+        barcode = Code39(data, writer=ImageWriter(), add_checksum=False)
+        barcode.save(file_path)
+
+    return f"barcode/{prefix_hash}/{id_hash}.png"

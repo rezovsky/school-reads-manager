@@ -140,8 +140,56 @@ export default {
                 return `${age} лет`;
             }
         },
-        getFirstField(){
+        getFirstField() {
             return Object.keys(this.namesOfField)[0] + 'Field'
-        }
+        },
+        performSearch() {
+            const searchPrefix = this.searchText.substring(0, 3)
+            switch (searchPrefix) {
+                case '888':
+                    if (this.moduleName === "reader" && this.detailId) {
+                        const parts = this.searchText.split('-');
+                        const inv = `${parts[1]}.${parts[2]}`
+                        console.log(`Add book to ${this.detailId}: ${inv}`)
+                    }
+                    break;
+                case '978':
+                    if (this.moduleName === 'textbook') {
+                        const foundModule = this.moduleData.find(item => item.isbn === this.searchText);
+                        if (foundModule) {
+                            this.loadModuleDetails(this.searchText)
+                        } else {
+                            this.newItems.isbn = this.searchText
+
+                            const addTextBookButton = document.getElementById('addTextBookButton');
+
+                            addTextBookButton.click();
+                        }
+                    }
+                    break;
+                case '777':
+                    console.log('Поиски ученика');
+                    break;
+            }
+            this.searchText = ''
+        },
+        handleGlobalKeyPress(event) {
+            const activeElement = document.activeElement;
+
+            if (activeElement.tagName !== 'INPUT') {
+                if (
+                    event.key.match(/[a-zA-Z0-9.\-]/) &&
+                    event.key.length === 1
+                ) {
+                    this.searchText += event.key;
+                }
+                if (event.key === 'Enter') {
+                    if (this.searchText) {
+                        this.performSearch();
+                    }
+                }
+            }
+        },
+
     }
 };
