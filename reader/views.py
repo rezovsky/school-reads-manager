@@ -73,7 +73,7 @@ class ReaderBorrowedBookList(generics.ListAPIView):
 
     def get_queryset(self):
         id = self.kwargs['id']
-        queryset = BorrowedBook.objects.filter(id=id).order_by('date')
+        queryset = BorrowedBook.objects.filter(id=id).order_by('date').select_related('textbook__isbn')
         return queryset
 
 

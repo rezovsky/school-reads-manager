@@ -230,7 +230,7 @@
             <thead>
             <tr>
                 <th>Инвентарный номер</th>
-                <th>Печать</th>
+                <th>Название</th>
                 <th>Удаление</th>
             </tr>
             </thead>
@@ -238,10 +238,7 @@
             <tr v-for="inventNumber in moduleDetail" :key="inventNumber.id">
                 <td>{{ inventNumber.inv }}</td>
                 <td>
-                    <a :href="'/print/single/' + inventNumber.isbn + '/' + inventNumber.inv" target="_blank"
-                       class="btn btn-primary btn-sm">
-                        Печать
-                    </a>
+
                 </td>
                 <td>
                     <button @click="apiInvent('del', inventNumber.inv)" :disabled="addingInventory"
@@ -252,6 +249,7 @@
             </tr>
             </tbody>
         </table>
+
     </div>
 
 </div>

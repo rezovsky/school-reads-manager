@@ -136,6 +136,7 @@ new Vue({
     },
     mounted() {
         document.body.addEventListener('keydown', this.handleGlobalKeyPress);
+
     },
     beforeDestroy() {
         document.body.removeEventListener('keydown', this.handleGlobalKeyPress);

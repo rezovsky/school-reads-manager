@@ -23,7 +23,7 @@ class TextBook(models.Model):
 
 
 class TextBookInvent(models.Model):
-    inv = models.CharField('Инвентарный номер', max_length=10)
+    inv = models.CharField('Инвентарный номер', max_length=10, unique=True)
     isbn = models.ForeignKey(TextBook, on_delete=models.CASCADE, to_field='isbn')
     date = models.DateTimeField('Дата добавления', default=timezone.now)
 

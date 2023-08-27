@@ -181,6 +181,9 @@ export default {
                         }
                     }
                     break;
+                case '000':
+                    this.goBack()
+                    break;
             }
             this.searchText = ''
         },

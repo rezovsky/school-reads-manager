@@ -18,7 +18,7 @@ class Reader(models.Model):
 
 class BorrowedBook(models.Model):
     reader = models.ForeignKey(Reader, on_delete=models.CASCADE)
-    textbook = models.ForeignKey(TextBookInvent, on_delete=models.CASCADE)
+    textbook = models.ForeignKey(TextBookInvent, on_delete=models.CASCADE, to_field='inv')
     date = models.DateTimeField('Дата добавления', default=timezone.now)
 
     def __str__(self):
