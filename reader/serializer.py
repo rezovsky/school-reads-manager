@@ -37,6 +37,13 @@ class ReadersListSerializer(serializers.ModelSerializer):
 
 
 class ReaderBorrowedBooksSerializer(serializers.ModelSerializer):
+    textbook_title = serializers.SerializerMethodField()
+
     class Meta:
         model = BorrowedBook
-        fields = ('id', 'reader', 'textbook')
+        fields = ('id', 'reader', 'textbook', 'textbook_title')
+
+    def get_textbook_title(self, obj):
+        return obj.textbook.isbn.title if obj.textbook.isbn else None
+
+

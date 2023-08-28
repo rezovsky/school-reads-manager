@@ -229,20 +229,20 @@
         <table v-if="moduleDetail.length > 0" class="table table-striped">
             <thead>
             <tr>
-                <th>Инвентарный номер</th>
                 <th>Название</th>
+                <th>Инвентарный номер</th>
+
                 <th>Удаление</th>
             </tr>
             </thead>
             <tbody>
-            <tr v-for="inventNumber in moduleDetail" :key="inventNumber.id">
-                <td>{{ inventNumber.inv }}</td>
-                <td>
+            <tr v-for="borrowedbook in moduleDetail" :key="borrowedbook.id">
+                <td>{{ borrowedbook.textbook_title }}</td>
+                <td>{{ borrowedbook.textbook }}</td>
 
-                </td>
                 <td>
-                    <button @click="apiInvent('del', inventNumber.inv)" :disabled="addingInventory"
-                            class="btn btn-primary mb-0 ms-2" :disabled="addingInventory">
+                    <button @click="borrowedDel(borrowedbook.id)"
+                            class="btn btn-primary mb-0 ms-2">
                         Удалить
                     </button>
                 </td>

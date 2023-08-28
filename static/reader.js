@@ -55,17 +55,13 @@ new Vue({
             axios.get(`/api/${this.moduleName}/${id}`)
                 .then(response => {
                     this.moduleDetail = response.data;
-                    console.log(this.moduleDetail)
-
-                    if (this.moduleDetail.length > 0) {
-                        this.inventNumber = this.moduleDetail[0].inv.split('.')[0];
-                    } else {
-                        this.inventNumber = 0;
-                    }
                 })
                 .catch(error => {
                     console.error('Error fetching books:', error);
                 });
+        },
+        borrowedDel(id){
+            console.log(id)
         },
         importCsv() {
             axios.get(`/api/upload/?key=${this.filekey}`).then(

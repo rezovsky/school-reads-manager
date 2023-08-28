@@ -14,6 +14,7 @@ from rest_framework.viewsets import ModelViewSet
 
 from reader.models import Reader, BorrowedBook
 from reader.serializer import ReaderSerializer, ReadersListSerializer, ReaderBorrowedBooksSerializer
+from textbook.models import TextBook
 
 
 class ReadersList(ModelViewSet):
@@ -73,8 +74,9 @@ class ReaderBorrowedBookList(generics.ListAPIView):
 
     def get_queryset(self):
         id = self.kwargs['id']
-        queryset = BorrowedBook.objects.filter(id=id).order_by('date').select_related('textbook__isbn')
-        return queryset
+        borrowed_books = BorrowedBook.objects.filter(reader_id=id).order_by('date').prefetch_related('textbook__isbn')
+
+        return borrowed_books
 
 
 class FileUploadView(APIView):
