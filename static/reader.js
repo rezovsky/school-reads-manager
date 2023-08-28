@@ -55,6 +55,7 @@ new Vue({
             axios.get(`/api/${this.moduleName}/${id}`)
                 .then(response => {
                     this.moduleDetail = response.data;
+                    console.log(this.moduleDetail)
 
                     if (this.moduleDetail.length > 0) {
                         this.inventNumber = this.moduleDetail[0].inv.split('.')[0];
