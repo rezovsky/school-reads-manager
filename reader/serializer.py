@@ -47,3 +47,7 @@ class ReaderBorrowedBooksSerializer(serializers.ModelSerializer):
         return obj.textbook.isbn.title if obj.textbook.isbn else None
 
 
+class BorrowedBookSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BorrowedBook
+        fields = '__all__'

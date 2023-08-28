@@ -241,7 +241,7 @@
                 <td>{{ borrowedbook.textbook }}</td>
 
                 <td>
-                    <button @click="borrowedDel(borrowedbook.id)"
+                    <button @click="borrowedDel(borrowedbook.id, borrowedbook.reader)"
                             class="btn btn-primary mb-0 ms-2">
                         Удалить
                     </button>

@@ -155,6 +155,7 @@ export default {
                         const parts = this.searchText.split('-');
                         const inv = `${parts[1]}.${parts[2]}`
                         console.log(`Add book to ${this.detailId}: ${inv}`)
+                        this.addBorrowedBook(this.detailId, inv)
                     }
                     break;
                 case '978':
