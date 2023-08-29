@@ -185,8 +185,7 @@
                         :key="reader.id"
                         @click="loadModuleDetails(reader.id)"
                         class="clickable-row"
-                        v-show="selectedGroup ? (reader.data.clas + ' ' + reader.data.class_letter).includes(selectedGroup) : true"
-
+                        v-show="selectedGroup ? selectedGroup === `${reader.data.clas} ${reader.data.class_letter}` : true"
                 >
                     <td>{{ reader.data.last_name }} {{ reader.data.first_name }}</td>
                     <td>{{ formatDate(reader.data.birth_date) }} ({{ calculateAge(reader.data.birth_date) }})</td>

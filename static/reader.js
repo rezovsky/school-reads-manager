@@ -63,7 +63,7 @@ new Vue({
         addBorrowedBook(reader, inv) {
             axios.post(`/api/borrowed/`, {'reader': reader, 'textbook': inv})
                 .then(response => {
-                    if(response.status === 201){
+                    if (response.status === 201) {
                         this.loadModuleDetails(reader)
                     }
                 })
@@ -133,9 +133,15 @@ new Vue({
         ,
         updateSelectedGroup(group) {
             this.selectedGroup = group;
-            this.filterClas = group.split(' ')[0]
-            this.filterLater = group.split(' ')[1]
-            this.filteredRowCount = this.moduleData.readers.filter(reader => (reader.data.clas + ' ' + reader.data.class_letter).includes(group)).length;
+
+            const [clas, class_letter] = group.split(' ');
+            this.filterClas = clas;
+            this.filterLater = class_letter;
+
+            this.filteredRowCount = this.moduleData.readers.filter(reader => {
+                const readerGroup = reader.data.clas + ' ' + reader.data.class_letter;
+                return readerGroup === group;
+            }).length;
         }
         ,
     },

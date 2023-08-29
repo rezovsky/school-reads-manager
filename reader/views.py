@@ -182,8 +182,8 @@ class FileUploadView(APIView):
 
     def read_data_from_file(self, file_path):
         data = []
-        with open(file_path, 'r', encoding='utf-8', newline='') as csvfile:
-            reader = csv.reader(csvfile)
+        with open(file_path, 'r', encoding='cp1251', newline='', errors='ignore') as csvfile:
+            reader = csv.reader(csvfile, delimiter=';')
             next(reader)
             for row in reader:
                 data.append(row)
