@@ -55,29 +55,47 @@ new Vue({
             axios.get(`/api/${this.moduleName}/${id}`)
                 .then(response => {
                     this.moduleDetail = response.data;
-                    console.log(this.moduleDetail)
-
-                    if (this.moduleDetail.length > 0) {
-                        this.inventNumber = this.moduleDetail[0].inv.split('.')[0];
-                    } else {
-                        this.inventNumber = 0;
+                })
+                .catch(error => {
+                    console.error('Error fetching books:', error);
+                });
+        },
+        addBorrowedBook(reader, inv) {
+            axios.post(`/api/borrowed/`, {'reader': reader, 'textbook': inv})
+                .then(response => {
+                    if(response.status === 201){
+                        this.loadModuleDetails(reader)
                     }
                 })
                 .catch(error => {
                     console.error('Error fetching books:', error);
                 });
         },
+        borrowedDel(id, reader) {
+            axios.delete(`/api/borrowed/${id}/${reader}/`)
+                .then(response => {
+                    if (response.status === 204) {
+                        this.loadModuleDetails(reader)
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching books:', error);
+                });
+        }
+        ,
         importCsv() {
             axios.get(`/api/upload/?key=${this.filekey}`).then(
                 response => {
                     this.resetModal()
                     this.fetchModuleData()
                 })
-        },
+        }
+        ,
         handleFileUpload(event) {
             this.file = event.target.files[0];
             this.uploadFile()
-        },
+        }
+        ,
         uploadFile() {
             if (!this.file) return;
 
@@ -106,17 +124,20 @@ new Vue({
                 console.error('An error occurred:', error);
             });
 
-        },
+        }
+        ,
         resetModal() {
             this.uploadProgress = 0
             this.filecomplite = false
-        },
+        }
+        ,
         updateSelectedGroup(group) {
             this.selectedGroup = group;
             this.filterClas = group.split(' ')[0]
             this.filterLater = group.split(' ')[1]
             this.filteredRowCount = this.moduleData.readers.filter(reader => (reader.data.clas + ' ' + reader.data.class_letter).includes(group)).length;
-        },
+        }
+        ,
     },
     created() {
         this.initFields()
@@ -134,13 +155,18 @@ new Vue({
             }
         });
 
-    },
+    }
+    ,
     mounted() {
         document.body.addEventListener('keydown', this.handleGlobalKeyPress);
 
-    },
+    }
+    ,
     beforeDestroy() {
         document.body.removeEventListener('keydown', this.handleGlobalKeyPress);
-    },
-    computed: {},
-});
+    }
+    ,
+    computed: {}
+    ,
+})
+;

@@ -13,7 +13,9 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
 from reader.models import Reader, BorrowedBook
-from reader.serializer import ReaderSerializer, ReadersListSerializer, ReaderBorrowedBooksSerializer
+from reader.serializer import ReaderSerializer, ReadersListSerializer, ReaderBorrowedBooksSerializer, \
+    BorrowedBookSerializer
+from textbook.models import TextBook
 
 
 class ReadersList(ModelViewSet):
@@ -73,8 +75,39 @@ class ReaderBorrowedBookList(generics.ListAPIView):
 
     def get_queryset(self):
         id = self.kwargs['id']
-        queryset = BorrowedBook.objects.filter(id=id).order_by('date').select_related('textbook__isbn')
-        return queryset
+        borrowed_books = BorrowedBook.objects.filter(reader_id=id).order_by('date').prefetch_related('textbook__isbn')
+
+        return borrowed_books
+
+
+class BorrowedBookView(APIView):
+    def post(self, request, format=None):
+        # Обработка POST-запроса, например, создание записи
+
+        # Получение значения переменной textbook из запроса
+        textbook_value = request.data.get('textbook')
+
+        # Проверка наличия записей с таким же textbook_value
+        if BorrowedBook.objects.filter(textbook=textbook_value).exists():
+            return Response({'message': 'Record with this textbook already exists.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Продолжение кода для создания записи
+        serializer = BorrowedBookSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, id, reader, format=None):
+        try:
+            borrowed_book = BorrowedBook.objects.get(id=id)
+            if borrowed_book.reader.id == int(reader):
+                borrowed_book.delete()
+                return Response(status=status.HTTP_204_NO_CONTENT)
+            else:
+                return Response({'message': 'Reader does not match.'}, status=status.HTTP_400_BAD_REQUEST)
+        except BorrowedBook.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 class FileUploadView(APIView):
