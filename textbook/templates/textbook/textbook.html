@@ -128,7 +128,7 @@
 
             <span class="badge d-flex align-items-center text-primary-emphasis bg-primary-subtle border border-primary-subtle ml-2">
                 <span class="text-muted my-2 ms-2">Инвентарный номер:</span>
-                <input type="number" v-model="inventNumber" min="0" class="mb-0 ms-2" style="width: 100px;"
+                <input type="text" v-model="inventNumber" min="0" class="mb-0 ms-2" style="width: 100px;"
                        @keyup.enter="focusToElement('inventCountInput')" @focus="selectAllText($event)">
                 <span class="text-muted my-2 ms-2">X</span>
                   <input type="number" v-model="inventCount" min="1" class="mb-0 ms-2" style="width: 50px;"
