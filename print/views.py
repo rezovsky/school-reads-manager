@@ -66,26 +66,33 @@ def readerslist(request, clas, letter):
 def groupbook(request, clas, letter):
     readers = Reader.objects.filter(clas=clas, class_letter=letter).order_by('last_name', 'first_name')
     readers_array = []
+    group_books = set()
+
     for reader in readers:
-        borrowed_book = BorrowedBook.objects.filter(reader=reader)
+        reader_books = BorrowedBook.objects.filter(reader=reader)
         reader_book = []
-        group_books = set()
-        for book in borrowed_book:
-            inv_number = book.textbook
-            text_book = TextBookInvent.objects.get(inv=inv_number)
-            isbn = text_book.isbn
-            text_book_title = TextBook.objects.get(isbn=isbn).title
+
+        isbn_list = reader_books.values_list('textbook__isbn', flat=True)
+
+        books_info = TextBook.objects.filter(isbn__in=isbn_list).values('isbn', 'title')
+
+        for book in reader_books:
+            isbn = book.textbook.isbn
+            text_book_title = books_info.get(isbn=isbn)['title']
             group_books.add((str(isbn), text_book_title))
             reader_book.append({'isbn': str(isbn)})
+
         first_name = reader.first_name
         last_name = reader.last_name
         readers_array.append({'first_name': first_name, 'last_name': last_name, 'book': reader_book})
-        data = {
-            'clas': clas,
-            'letter': letter,
-            'readers': readers_array,
-            'group_books': group_books,
-        }
+
+    data = {
+        'clas': clas,
+        'letter': letter,
+        'readers': readers_array,
+        'group_books': group_books,
+    }
+
     return render(request, 'print/groupbook.html', data)
 
 
