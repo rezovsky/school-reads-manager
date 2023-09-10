@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ clas }}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'printa4.css' %}">
+</head>
+<body>
+<div class="header">
+    <h3>Класс {{ clas }} {{ letter }}</h3>
+</div>
+{{ group_books }}
+<table>
+    <thead>
+    <tr>
+        <th>Номер</th>
+        <th>Ученик</th>
+        <th>Учебники</th>
+        <th>Подпись</th>
+
+    </tr>
+    </thead>
+    <tbody>
+    {% for reader in readers %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ reader.last_name }} {{ reader.first_name }}</td>
+            <td>{{ reader.book }}</td>
+            <td colspan="3"></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</body>
+</html>
+{#<script>#}
+{#    document.addEventListener("DOMContentLoaded", function () {#}
+{#        setTimeout(function () {#}
+{#            window.print();#}
+{#        }, 100);#}
+{##}
+{#        window.addEventListener("afterprint", function () {#}
+{#            setTimeout(function () {#}
+{#                window.close();#}
+{#            }, 100);#}
+{#        });#}
+{#    });#}
+{#</script>#}

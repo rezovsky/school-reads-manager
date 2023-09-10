@@ -4,7 +4,7 @@ import os
 import qrcode
 from django.shortcuts import render, redirect
 from textbook.models import TextBook, TextBookInvent
-from reader.models import Reader
+from reader.models import Reader, BorrowedBook
 
 from barcode import Code39
 from barcode.writer import ImageWriter
@@ -61,6 +61,32 @@ def readerslist(request, clas, letter):
             'goback': barcode_generate('000', '000')
         }
     return render(request, 'print/readerslist.html', data)
+
+
+def groupbook(request, clas, letter):
+    readers = Reader.objects.filter(clas=clas, class_letter=letter).order_by('last_name', 'first_name')
+    readers_array = []
+    for reader in readers:
+        borrowed_book = BorrowedBook.objects.filter(reader=reader)
+        reader_book = []
+        group_books = set()
+        for book in borrowed_book:
+            inv_number = book.textbook
+            text_book = TextBookInvent.objects.get(inv=inv_number)
+            isbn = text_book.isbn
+            text_book_title = TextBook.objects.get(isbn=isbn).title
+            group_books.add((str(isbn), text_book_title))
+            reader_book.append({'isbn': str(isbn)})
+        first_name = reader.first_name
+        last_name = reader.last_name
+        readers_array.append({'first_name': first_name, 'last_name': last_name, 'book': reader_book})
+        data = {
+            'clas': clas,
+            'letter': letter,
+            'readers': readers_array,
+            'group_books': group_books,
+        }
+    return render(request, 'print/groupbook.html', data)
 
 
 def media_root(req):
