@@ -79,18 +79,19 @@ def groupbook(request, clas, letter):
         for book in reader_books:
             isbn = book.textbook.isbn
             text_book_title = books_info.get(isbn=isbn)['title']
-            group_books.add((str(isbn), text_book_title))
-            reader_book.append({'isbn': str(isbn)})
+            group_books.add(text_book_title)
+            reader_book.append(text_book_title)
 
         first_name = reader.first_name
         last_name = reader.last_name
-        readers_array.append({'first_name': first_name, 'last_name': last_name, 'book': reader_book})
+        readers_array.append({'first_name': first_name, 'last_name': last_name, 'book': set(reader_book)})
 
     data = {
         'clas': clas,
         'letter': letter,
         'readers': readers_array,
-        'group_books': group_books,
+        'group_books': set(group_books),
+        'group_books_count': len(group_books),
     }
 
     return render(request, 'print/groupbook.html', data)

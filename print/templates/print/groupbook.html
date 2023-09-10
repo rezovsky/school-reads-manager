@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{ clas }}</title>
+    <title>{{ clas }} {{ letter }}</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'printa4.css' %}">
 </head>
@@ -10,13 +10,14 @@
 <div class="header">
     <h3>Класс {{ clas }} {{ letter }}</h3>
 </div>
-{{ group_books }}
 <table>
     <thead>
     <tr>
         <th>Номер</th>
         <th>Ученик</th>
-        <th>Учебники</th>
+        {% for book in group_books %}
+            <th>{{ book }}</th>
+        {% endfor %}
         <th>Подпись</th>
 
     </tr>
@@ -26,7 +27,15 @@
         <tr>
             <td>{{ forloop.counter }}</td>
             <td>{{ reader.last_name }} {{ reader.first_name }}</td>
-            <td>{{ reader.book }}</td>
+
+            {% for title_book in group_books %}
+                <td>
+                {% for book in reader.book %}
+                    {% if book == title_book %}+{% endif %}
+                {% endfor %}
+                </td>
+            {% endfor %}
+
             <td colspan="3"></td>
         </tr>
     {% endfor %}
