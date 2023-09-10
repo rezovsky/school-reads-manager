@@ -1,9 +1,32 @@
-{% extends 'main/base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Моя страница</title>
+    <!-- Подключаем Bootstrap CSS -->
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    {% bootstrap_messages %}
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Левая часть (2/3 экрана) -->
+        <div class="col-md-8">
+            <!-- Здесь будет содержимое, например, изображения -->
+            <h1>Содержимое слева</h1>
+            <!-- Замените этот текст на ваше изображение -->
+            <img src="your-image.jpg" alt="Ваше изображение" class="img-fluid">
+        </div>
+        <!-- Правая часть (1/3 экрана) -->
+        <div class="col-md-4">
+            <!-- Кнопка входа, ведущая на страницу main -->
+            <a href="{% url 'main' %}" class="btn btn-primary btn-block mt-3">Войти</a>
+        </div>
+    </div>
+</div>
 
-{% block title %}
-Главная страница
-{% endblock %}
-
-{% block content %}
-<h1>Главная страница</h1>
-{% endblock %}
+</body>
+</html>
