@@ -79,6 +79,9 @@ def groupbook(request, clas, letter):
         for book in reader_books:
             isbn = book.textbook.isbn
             text_book_title = books_info.get(isbn=isbn)['title']
+            title_parts = text_book_title.split()
+            if 'шк' in title_parts:
+                text_book_title = ' '.join(title_parts[:-2])
             group_books.add(text_book_title)
             reader_book.append(text_book_title)
 

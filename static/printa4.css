@@ -37,6 +37,11 @@ th {
     background-color: #f2f2f2;
 }
 
+.th-rotate{
+    writing-mode: vertical-lr;
+    transform: rotate(180deg);
+}
+
 img {
     max-width: 100px;
 }
