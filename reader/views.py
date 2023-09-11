@@ -69,6 +69,23 @@ class ReaderView(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def put(self, request, id):
+        try:
+            instance = Reader.objects.get(id=id)
+        except Reader.DoesNotExist:
+            return Response({'error': 'Reader not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = self.serializer_class(instance, data=request.data, partial=True)
+        try:
+            if serializer.is_valid():
+                serializer.save()
+                serialized_data = serializer.data
+                return Response(serialized_data, status=status.HTTP_200_OK)
+        except IntegrityError as e:
+            return Response({'error': 'ID already exists.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class ReaderBorrowedBookList(generics.ListAPIView):
     serializer_class = ReaderBorrowedBooksSerializer
@@ -89,7 +106,8 @@ class BorrowedBookView(APIView):
 
         # Проверка наличия записей с таким же textbook_value
         if BorrowedBook.objects.filter(textbook=textbook_value).exists():
-            return Response({'message': 'Record with this textbook already exists.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': 'Record with this textbook already exists.'},
+                            status=status.HTTP_400_BAD_REQUEST)
 
         # Продолжение кода для создания записи
         serializer = BorrowedBookSerializer(data=request.data)
