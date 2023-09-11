@@ -197,7 +197,8 @@
                     >
                         <td>{{ reader.data.last_name }} {{ reader.data.first_name }}</td>
                         <td>{{ formatDate(reader.data.birth_date) }} ({{ calculateAge(reader.data.birth_date) }})</td>
-                        <td>{{ reader.data.clas }} {{ reader.data.class_letter }}</td>
+                        <td>{{ reader.data.clas === 0 ? '' : reader.data.clas }}
+                            {{ reader.data.class_letter === 'У' ? 'Учитель' : reader.data.class_letter }}</td>
                         <td></td>
                     </tr>
                     </tbody>
