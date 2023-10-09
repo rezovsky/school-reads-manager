@@ -13,7 +13,7 @@ SECRET_KEY = 'django-insecure-rgf3-_xt=crjygn4w2zazn!k-!fa46y%zq2w8t5t5f806&s%v0
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.1.250', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['educontrolhub.ru', 'localhost', '127.0.0.1']
 
 # Application definition
 
