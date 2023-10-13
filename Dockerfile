@@ -1,16 +1,10 @@
-FROM python:3.8.10-slim
+FROM python:3.9
 
-RUN mkdir bibl
-WORKDIR bibl
+WORKDIR /app
 
-ADD requirements.txt /bibl/
-RUN pip install -r requirements.txt
-ADD .. /bibl/
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-ADD .docker.env /bibl/.env
-ENV APP_NAME=BIBL
+COPY . .
 
-RUN pip3 install -r requirements.txt
-
-
-CMD gunicorn bibl.wsgi:application -b 0.0.0.0:8000
+CMD ["python", "app.py"]
