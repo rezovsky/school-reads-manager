@@ -1,9 +1,15 @@
 from fastapi import FastAPI
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.orm import sessionmaker
 from starlette.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 import settings
 
 # DB
+
+enggine = create_async_engine(settings.REAL_DATABASE_URL, future=True, echo=True)
+
+async_session = sessionmaker(enggine, expire_on_commit=False, class_=AsyncSession)
 
 
 
