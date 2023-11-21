@@ -1,9 +1,9 @@
 import re
 import uuid
-
 import uvicorn
-from fastapi import FastAPI, HTTPException, APIRouter
-from pydantic import BaseModel, EmailStr, validator
+from fastapi import FastAPI, HTTPException
+from fastapi.routing import APIRouter
+from pydantic.v1 import BaseModel, EmailStr, validator
 from sqlalchemy import Column, String, Boolean
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy.dialects.postgresql import UUID
@@ -53,7 +53,7 @@ class UsrDAL:
 
 # MODELS API
 
-LETTER_MATCH_PATTERN = re.compile(r"^[a-zA-Zа-яА-Я\-]+$")
+LETTER_MATCH_PATTERN = re.compile(r"^[а-яА-Яa-zA-Z\- ]+$")
 
 
 class TunedModel(BaseModel):
