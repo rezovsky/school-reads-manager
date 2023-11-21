@@ -29,13 +29,13 @@ class User(Base):
     name = Column(String(50), nullable=False)
     surname = Column(String(50), nullable=False)
     email = Column(String(50), nullable=False, unique=True)
-    is_active = Column(Boolean, default=True)
+    is_active = Column(Boolean(), default=True)
 
 
 # LOGIC
 
-class UsrDAL:
-    def __int__(self, db_session: AsyncSession):
+class UserDAL:
+    def __init__(self, db_session: AsyncSession):
         self.db_session = db_session
 
     async def create_user(
@@ -57,7 +57,7 @@ LETTER_MATCH_PATTERN = re.compile(r"^[а-яА-Яa-zA-Z\- ]+$")
 
 
 class TunedModel(BaseModel):
-    class config:
+    class Config:
         orm_mode = True
 
 
@@ -95,7 +95,7 @@ class UserCreate(BaseModel):
 
 app = FastAPI(title="school-reads-manager")
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
+#app.mount("/static", StaticFiles(directory="static"), name="static")
 
 user_router = APIRouter()
 
@@ -103,7 +103,7 @@ user_router = APIRouter()
 async def _create_new_user(body: UserCreate) -> ShowUser:
     async with async_session() as session:
         async with session.begin():
-            user_dal = UsrDAL(session)
+            user_dal = UserDAL(session)
             user = await user_dal.create_user(
                 name=body.name,
                 surname=body.surname,
