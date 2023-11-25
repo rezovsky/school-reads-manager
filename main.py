@@ -95,9 +95,10 @@ class UserCreate(BaseModel):
 
 app = FastAPI(title="school-reads-manager")
 
-#app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 user_router = APIRouter()
+main_router = APIRouter()
 
 
 async def _create_new_user(body: UserCreate) -> ShowUser:
@@ -126,6 +127,7 @@ async def create_user(body: UserCreate) -> ShowUser:
 main_api_router = APIRouter()
 
 main_api_router.include_router(user_router, prefix="/user", tags=["user"])
+main_api_router.include_router(main_router, prefix="/", tags=["main"])
 app.include_router(main_api_router)
 
 if __name__ == "__main__":
